@@ -1,0 +1,141 @@
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tLmNzcyIsInNvdXJjZXMiOlsiY3VzdG9tLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiJ9 */
+
+/*# sourceMappingURL=custom.css.map */
+
+
+ div{
+    opacity:1;
+    transition:opacity 1000ms;
+}
+div.waa {
+    opacity:0;
+}
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.invalid-feedback-server-side {
+    width: 100%;
+    margin-top: -0.75rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+.withtablemodel {
+	max-width: 700px !important;
+}
+.withtablemodelpermission {
+	max-width: 700px !important;
+}
+
+.activeinactive{
+	cursor: grabbing;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.card-header-attribute {
+    border-bottom-color: #f9f9f9;
+    line-height: 30px;
+    -ms-grid-row-align: center;
+    align-self: center;
+    width: 100%;
+    padding: 10px 25px;
+    display: flex;
+    align-items: center;
+    background-color: #969ab4;
+    color: #ffff;
+    font-weight: bold;
+    font-size: 19px;
+    margin-bottom: 28px;
+}
+
+.MultiCheckBox {
+  border:1px solid #e2e2e2;
+  padding: 5px;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.MultiCheckBox .k-icon{ 
+  font-size: 15px;
+  float: right;
+  font-weight: bolder;
+  margin-top: -7px;
+  height: 10px;
+  width: 14px;
+  color:#787878;
+} 
+
+.MultiCheckBoxDetail {
+  display:none;
+  position:absolute;
+  border:1px solid #e2e2e2;
+  overflow-y:hidden;
+}
+
+.MultiCheckBoxDetailBody {
+  overflow-y:scroll;
+}
+
+.MultiCheckBoxDetail .cont  {
+  clear:both;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.MultiCheckBoxDetail .cont:hover  {
+  background-color:#cfcfcf;
+}
+
+.MultiCheckBoxDetailBody > div > div {
+  float:left;
+}
+
+.MultiCheckBoxDetail>div>div:nth-child(1) {
+
+}
+
+.MultiCheckBoxDetailHeader {
+  overflow:hidden;
+  position:relative;
+  height: 28px;
+  background-color:#3d3d3d;
+  width: 481px;
+}
+
+.MultiCheckBoxDetailHeader>input {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+}
+
+.MultiCheckBoxDetailHeader>div {
+  position: absolute;
+  top: 5px;
+  left: 24px;
+  color:#fff;
+}
+.MultiCheckBoxDetail{
+z-index: 99999;
+background: #fff;
+}
+
+.scrolllist{
+    overflow: scroll;
+    height: 200px;
+}
+
+.custom-switch{margin: 23px 112px 0px 0px;}
+.lsp-table-list-scroll{overflow: scroll;height: 347px;}
+.federal-state-scrolllist{overflow: scroll; height: 347px;}
