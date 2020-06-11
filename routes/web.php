@@ -86,6 +86,8 @@ Route::group(['namespace'=>'Admin'], function(){
 	Route::post('configuration/gradplan/addSubGradePlan', 'GradplanController@addSubGradePlan')->name('gradplan.addSubGradePlan');
 	Route::post('configuration/gradplan/getGradPlanItemList', 'GradplanController@getGradPlanItemList')->name('gradplan.getGradPlanItemList');
 	Route::post('configuration/gradplan/editSubGradPlan', 'GradplanController@editSubGradPlan')->name('gradplan.editSubGradPlan');
+	Route::post('configuration/gradplan/editMainGradPlan', 'GradplanController@editMainGradPlan')->name('gradplan.editMainGradPlan');
+	Route::get('configuration/gradplan/mapping', 'GradplanController@mapping')->name('gradplan.mapping');
 	// end for Configuration all routes 
 	
 

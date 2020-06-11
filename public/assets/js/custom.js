@@ -586,27 +586,62 @@ function showHideStateListColumn(val){
 
 // funnction for grad plan (configuration) start
 function showAddNewPopUpForGradPlanConfig(){
+  $('#main_grad_plan_name').val('');
+  $('#main_grad_plan_description').val('');
+  $('#input_field_hidden_edit_id').val('');
   $("#grad_plan_config_modal").modal("show");
 }
 
 function addMainGradePlan(){
   var main_grad_plan_name = $('#main_grad_plan_name').val();
   var main_grad_plan_description = $('#main_grad_plan_description').val();
+  var main_grad_plan_status = $('#main_grad_plan_status').val();
   if(main_grad_plan_name == ''){
     alert('Please enter name!');
     return false;
+  }
+  if($('#input_field_hidden_edit_id').val() != ''){
+  var main_grad_edit_id = $('#input_field_hidden_edit_id').val();
+  }else{
+    main_grad_edit_id = '0';
   }
   checkxCSRFToken();
           $.ajax({
             url: "addMainGradePlan",
             type: 'post',
-           data:{main_grad_plan_name:main_grad_plan_name, main_grad_plan_description:main_grad_plan_description},
+           data:{main_grad_edit_id:main_grad_edit_id,main_grad_plan_name:main_grad_plan_name, main_grad_plan_description:main_grad_plan_description,main_grad_plan_status:main_grad_plan_status},
             success: function(result){
               alert("Data insrted successfully!");
              $('#main_grad_plan_name').val('');
              $('#main_grad_plan_description').val('');
              window.location.reload();
               $("#grad_plan_config_modal").modal("hide");
+              $("#main_grad_popup").trigger("reset");
+                  return true;
+
+            }
+
+        });
+}
+
+function editMainGradPlan(id){
+  $('#main_grad_plan_name').val('');
+  $('#main_grad_plan_description').val('');
+  $('#input_field_hidden_edit_id').val('');
+  
+  checkxCSRFToken();
+          $.ajax({
+            url: "editMainGradPlan",
+            type: 'post',
+           data:{id:id},
+            success: function(result){
+              //console.log(result); return false;
+              var json_result=JSON.parse(result);
+              $('#input_field_hidden_edit_id').val(json_result.main_grad_edit_id);
+              $('#main_grad_plan_name').val(json_result.name);
+              $('#main_grad_plan_description').val(json_result.description);
+              //var sub_grad_plan_status = $('#sub_grad_plan_status').val(json_result.status);
+             $("#grad_plan_config_modal").modal("show");
                   return true;
 
             }
@@ -643,7 +678,8 @@ function getGradPlanItemList(name, id, sr, total_sr){
 }
 
 function showSubGradPlanModal(){
-
+  $('#sub_grad_plan_name').val('');
+  $('#input_field_hidden_sub_id').val('');
   $("#sub_grad_plan_config_modal").modal("show");
 }
 
@@ -652,6 +688,7 @@ function addSubGradePlan(){
   var input_field_hidden_main_id = $('#input_field_hidden_main_id').val();
   var sub_grad_plan_name = $('#sub_grad_plan_name').val();
   var sub_grad_plan_description = $('#sub_grad_plan_description').val();
+  var sub_grad_plan_status = $('#sub_grad_plan_status').val();
   if($('#input_field_hidden_sub_id').val() != ''){
   var sub_id = $('#input_field_hidden_sub_id').val();
   }else{
@@ -666,7 +703,7 @@ function addSubGradePlan(){
           $.ajax({
             url: "addSubGradePlan",
             type: 'post',
-           data:{sub_id:sub_id,sub_grad_plan_name:sub_grad_plan_name, sub_grad_plan_description:sub_grad_plan_description, main_grad_plan_id:input_field_hidden_main_id},
+           data:{sub_id:sub_id,sub_grad_plan_name:sub_grad_plan_name, sub_grad_plan_description:sub_grad_plan_description, main_grad_plan_id:input_field_hidden_main_id,sub_grad_plan_status:sub_grad_plan_status},
             success: function(result){
               //alert(result); return false;
               alert("Data Updated successfully!");
@@ -689,6 +726,7 @@ function editSubGradPlan(id){
   $('#input_field_hidden_sub_id').val('');
   $('#sub_grad_plan_name').val('');
   $('#sub_grad_plan_description').val('');
+  //$('#sub_grad_plan_status').val('');
   checkxCSRFToken();
           $.ajax({
             url: "editSubGradPlan",
@@ -697,10 +735,11 @@ function editSubGradPlan(id){
             success: function(result){
               //console.log(result); return false;
               var json_result=JSON.parse(result);
-              var input_field_hidden_main_id = $('#input_field_hidden_main_id').val(json_result.main_grad_plan_id);
-              var input_field_hidden_main_id = $('#input_field_hidden_sub_id').val(json_result.sub_id);
-              var sub_grad_plan_name = $('#sub_grad_plan_name').val(json_result.name);
-              var sub_grad_plan_description = $('#sub_grad_plan_description').val(json_result.description);
+              $('#input_field_hidden_main_id').val(json_result.main_grad_plan_id);
+              $('#input_field_hidden_sub_id').val(json_result.sub_id);
+              $('#sub_grad_plan_name').val(json_result.name);
+              $('#sub_grad_plan_description').val(json_result.description);
+              //var sub_grad_plan_status = $('#sub_grad_plan_status').val(json_result.status);
              $("#sub_grad_plan_config_modal").modal("show");
                   return true;
 

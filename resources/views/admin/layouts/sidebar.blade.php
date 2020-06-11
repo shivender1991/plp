@@ -48,6 +48,7 @@
                   data-feather="briefcase"></i><span>Configuration</span></a>
               <ul class="dropdown-menu">
               <li><a class="nav-link" href="{{ route('gradplan.list') }}">Grad Plan</a></li>
+              <li><a class="nav-link" href="{{ route('gradplan.mapping') }}">Grad Plan Mapping</a></li>
               </ul>
             </li>
           </ul>

@@ -4,33 +4,51 @@
   <div class="col-6">
     <div class="card">
       <div class="card-header">
-        <h4>Grad Plan List</h4>
+        <h4>Grad Plan Mapping</h4>
         <div class="card-header-action">
-        <a href="javascript:void(0);" onclick="showAddNewPopUpForGradPlanConfig();" class="btn btn-primary">Add New</a>
+        <!-- <a href="javascript:void(0);" onclick="showAddNewPopUpForGradPlanConfig();" class="btn btn-primary">Add New</a> -->
         </div>
       </div>
       <div class="card-body">
-        <div id="accordion">
-          <?php
-              if($configMainGradPlanDatas){
-                $count_grad_plan = count($configMainGradPlanDatas);
-                $sr = 1;
-              foreach($configMainGradPlanDatas as $configMainGradPlanData){
-             ?>
-        
-          
-          <div class="accordion">
-            <div class="accordion-header" id="grad_plan_item<?php echo $sr; ?>" role="button" onclick="getGradPlanItemList('<?php echo $configMainGradPlanData->name; ?>','<?php echo $configMainGradPlanData->id; ?>', '<?php echo $sr; ?>', '<?php echo $count_grad_plan; ?>');">
-                  <h4><?php echo $configMainGradPlanData->name; ?></h4>
+        <form class="" method="post">
                 
+                <div class="form-group">
+                  <label id="sub_input_type_status">Grad Plan</label>
+                  <div class="input-group">
+                    <select id="sub_grad_plan_status" class="form-control">
+                      <option value=" ">--Please Select--</option>
+                      <option value=" ">Prerequisite</option>
+                      <option value=" ">Diploma</option>
+                      <option value=" ">Post Graduate</option>
+                      <option value=" ">Core/Optional</option>
+                      <option value=" ">Mandatory/Optional</option>
+                    </select>
+                  </div>
                 </div>
-              <div class="accordion-header" role="button">
-                <a href="javascript:void(0);" onclick="editMainGradPlan('<?php echo $configMainGradPlanData->id; ?>');">Edit<a>
-              </div>
-          </div>
-          
-          <?php $sr++; }} ?>
-        </div>
+
+                <div class="form-group">
+                  <label id="sub_input_type_status">sub item</label>
+                  <div class="input-group">
+                    <select id="sub_grad_plan_status" class="form-control">
+                      <option value=" ">--Please Select--</option>
+                      <option value=" ">Standar</option>
+                      <option value=" ">Az</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label id="sub_input_type_status">Course</label>
+                  <div class="input-group">
+                    <select id="sub_grad_plan_status" class="form-control">
+                      <option value=" ">--Please Select Course--</option>
+                    </select>
+                  </div>
+                </div>
+
+                <input type="hidden" value="" id="input_field_hidden_sub_id">
+                <button type="button" id="add_sub_grad_plan_button" onclick="" class="btn btn-primary m-t-15 waves-effect">Add</button>
+              </form>
       </div>
     </div>
   </div>
@@ -40,7 +58,7 @@
       <div class="card-header">
         <h4 id="right_side_bar_title">Itme List</h4>
         <div class="card-header-action">
-        <a href="javascript:void(0);" onclick="showSubGradPlanModal();" class="btn btn-primary">Add New</a>
+        <!-- <a href="javascript:void(0);" onclick="showSubGradPlanModal();" class="btn btn-primary">Add New</a> -->
         </div>
         <input type="hidden" value="" id="input_field_hidden_main_id">
       </div>

@@ -1,0 +1,2 @@
+1. plp_config_main_grad_plans table new created for grad plan
+2. plp_config_sub_grad_plans table new created for grad plan
