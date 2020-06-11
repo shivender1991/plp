@@ -469,11 +469,6 @@ class StateController extends Controller
     }
 
 
-    // return response()->json([
-    //             't_head'=>$t_head,
-    //             't_body'=>$t_body
-    //             ]);
-
 }
 
 }

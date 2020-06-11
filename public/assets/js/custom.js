@@ -553,7 +553,7 @@ function showAllColumnsForStateListOnPopUp(){
             type: 'post',
            // data:{hidden_header_id:hidden_header_id, others_input:others_input},
             success: function(result){
-              $("#modal_center").modal("show");
+                 $("#modal_center").modal("show");
                  $("#modal_center .modal-body").html(result);
                   return false;
 
@@ -566,7 +566,6 @@ function showAllColumnsForStateListOnPopUp(){
 function showHideStateListColumn(val){
   
   checkxCSRFToken();
-  alert(val);
           $.ajax({
             url: "showHideStateListColumn",
             type: 'post',
@@ -576,11 +575,6 @@ function showHideStateListColumn(val){
              $('.state-list').html(result);
              //window.location.reload();
               console.log(result);
-                 //var json_result = JSON.parse(result); 
-                 // $('#t_head').html('');
-                 // $('#t_body').html('');
-                 // $('#t_head').html(json_result.t_head);
-                 // $('#t_body').html(json_result.t_body);
                   return false;
 
             }
@@ -590,8 +584,133 @@ function showHideStateListColumn(val){
 
 // end pop up
 
+// funnction for grad plan (configuration) start
+function showAddNewPopUpForGradPlanConfig(){
+  $("#grad_plan_config_modal").modal("show");
+}
+
+function addMainGradePlan(){
+  var main_grad_plan_name = $('#main_grad_plan_name').val();
+  var main_grad_plan_description = $('#main_grad_plan_description').val();
+  if(main_grad_plan_name == ''){
+    alert('Please enter name!');
+    return false;
+  }
+  checkxCSRFToken();
+          $.ajax({
+            url: "addMainGradePlan",
+            type: 'post',
+           data:{main_grad_plan_name:main_grad_plan_name, main_grad_plan_description:main_grad_plan_description},
+            success: function(result){
+              alert("Data insrted successfully!");
+             $('#main_grad_plan_name').val('');
+             $('#main_grad_plan_description').val('');
+             window.location.reload();
+              $("#grad_plan_config_modal").modal("hide");
+                  return true;
+
+            }
+
+        });
+}
+
+function getGradPlanItemList(name, id, sr, total_sr){
+  $('#right_side_bar_title').html('');
+  $('#right_side_bar_title').html(name);
+  $('#input_field_hidden_main_id').val('');
+  $('#input_field_hidden_main_id').val(id);
+  for(var i = 1; i <= total_sr; i++){
+    $('#grad_plan_item'+i).removeClass('btn-primary');
+  }
+  $('#grad_plan_item'+sr).addClass('btn-primary');
+  checkxCSRFToken();
+          $.ajax({
+            url: "getGradPlanItemList",
+            type: 'post',
+           data:{main_id:id},
+            success: function(result){
+              console.log(result);
+             $('#sub_grad_data_show').html('');
+             $('#sub_grad_data_show').html(result);
+             $('#show_right_side_div').show();
+             //window.location.reload();
+                  return true;
+
+            }
+
+        });
+  
+}
+
+function showSubGradPlanModal(){
+
+  $("#sub_grad_plan_config_modal").modal("show");
+}
 
 
+function addSubGradePlan(){
+  var input_field_hidden_main_id = $('#input_field_hidden_main_id').val();
+  var sub_grad_plan_name = $('#sub_grad_plan_name').val();
+  var sub_grad_plan_description = $('#sub_grad_plan_description').val();
+  if($('#input_field_hidden_sub_id').val() != ''){
+  var sub_id = $('#input_field_hidden_sub_id').val();
+  }else{
+    sub_id = '0';
+  }
+  //alert(sub_id); return false;
+  if(sub_grad_plan_name == ''){
+    alert('Please enter name!');
+    return false;
+  }
+  checkxCSRFToken();
+          $.ajax({
+            url: "addSubGradePlan",
+            type: 'post',
+           data:{sub_id:sub_id,sub_grad_plan_name:sub_grad_plan_name, sub_grad_plan_description:sub_grad_plan_description, main_grad_plan_id:input_field_hidden_main_id},
+            success: function(result){
+              //alert(result); return false;
+              alert("Data Updated successfully!");
+             $('#sub_grad_plan_name').val('');
+             $('#sub_grad_plan_description').val('');
+             //window.location.reload();
+             $('#sub_grad_data_show').html('');
+             $('#sub_grad_data_show').html(result);
+              $("#sub_grad_plan_config_modal").modal("hide");
+                  return true;
+
+            }
+
+        });
+}
+
+
+function editSubGradPlan(id){
+  $('#input_field_hidden_main_id').val('');
+  $('#input_field_hidden_sub_id').val('');
+  $('#sub_grad_plan_name').val('');
+  $('#sub_grad_plan_description').val('');
+  checkxCSRFToken();
+          $.ajax({
+            url: "editSubGradPlan",
+            type: 'post',
+           data:{id:id},
+            success: function(result){
+              //console.log(result); return false;
+              var json_result=JSON.parse(result);
+              var input_field_hidden_main_id = $('#input_field_hidden_main_id').val(json_result.main_grad_plan_id);
+              var input_field_hidden_main_id = $('#input_field_hidden_sub_id').val(json_result.sub_id);
+              var sub_grad_plan_name = $('#sub_grad_plan_name').val(json_result.name);
+              var sub_grad_plan_description = $('#sub_grad_plan_description').val(json_result.description);
+             $("#sub_grad_plan_config_modal").modal("show");
+                  return true;
+
+            }
+
+        });
+}
+
+
+// funnction for grad plan (configuration) end
 
 
 

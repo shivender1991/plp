@@ -36,9 +36,18 @@
             </li>
             <li class="dropdown">
               <a href="#" class="menu-toggle nav-link has-dropdown"><i
-                  data-feather="briefcase"></i><span>Mapped</span></a>
+                  data-feather="briefcase"></i><span>Course Catalog</span></a>
               <ul class="dropdown-menu">
-              <li><a class="nav-link" href="{{ route('mapped.list')}}">Mapping List</a></li>
+              <li><a class="nav-link" href="{{ route('mapped.list')}}">List</a></li>
+              </ul>
+            </li>
+
+
+            <li class="dropdown">
+              <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                  data-feather="briefcase"></i><span>Configuration</span></a>
+              <ul class="dropdown-menu">
+              <li><a class="nav-link" href="{{ route('gradplan.list') }}">Grad Plan</a></li>
               </ul>
             </li>
           </ul>

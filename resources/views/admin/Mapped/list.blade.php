@@ -4,7 +4,7 @@
 	  <div class="col-12">
 		<div class="card">
 		  <div class="card-header">
-		  <h4>Mapped LSP with Federa/State</h4>
+		  <h4>Master Catalog List</h4>
 		  <div class="card-header-action"> 
 		  </div>
 		</div>
@@ -20,23 +20,21 @@
 					<th>Course Title</th>
 					<th>Course Description</th>
 					<th>SCED Course Code</th>
-					<!-- <th>Chnage Status </th>
-					<th>Action</th> -->
+					<th>Action</th>
 				  </tr>
 				</thead>
 				<tbody>
 				@if(!$lspMappedDatas->isEmpty())
 				  @foreach($lspMappedDatas as $lspMappedData)
-
-
 				  <tr>
 					<td>		
 					 {{ $loop->iteration }}
 					</td>
-					<td>{{ $lspMappedData->course_id }}</td>
+					<td><a href="{{ route('mapped.course', ['id' =>$lspMappedData->id]) }}">{{ $lspMappedData->course_id }}</a></td>
 					<td>{{ $lspMappedData->SCED_course_title }}</td>
 					<td data-toggle="tooltip" data-placement="top" data-original-title="{{  Illuminate\Support\Str::limit($lspMappedData->SCED_course_description) }}">{{  Illuminate\Support\Str::limit($lspMappedData->SCED_course_description, 50) }}</td>
 					<td>{{ $lspMappedData->sced_course_id }}</td>
+					<td><a href="{{ route('mapped.show', ['id' =>$lspMappedData->id]) }}">View</a></td>
 				  </tr>
 			   @endforeach
 				   @else
@@ -53,6 +51,4 @@
 		</div>
 	  </div>
 	</div>
-			
-
 @endsection

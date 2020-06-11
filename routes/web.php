@@ -75,8 +75,18 @@ Route::group(['namespace'=>'Admin'], function(){
 
 	// start for mappled all routes 
 	Route::get('mapped/view', 'MappedController@view')->name('mapped.list');
+	Route::get('mapped/show/{id}', 'MappedController@show')->name('mapped.show');
+	Route::get('mapped/course/{id}', 'MappedController@getMappedCourseTopics')->name('mapped.course');
 	//Route::get('/', 'MappedController@index')->name('mapped.list');
 	// end for mappled all routes 
+
+	// start for Configuration all routes 
+	Route::get('configuration/gradplan/list', 'GradplanController@index')->name('gradplan.list');
+	Route::post('configuration/gradplan/addMainGradePlan', 'GradplanController@addMainGradePlan')->name('gradplan.addMainGradePlan');
+	Route::post('configuration/gradplan/addSubGradePlan', 'GradplanController@addSubGradePlan')->name('gradplan.addSubGradePlan');
+	Route::post('configuration/gradplan/getGradPlanItemList', 'GradplanController@getGradPlanItemList')->name('gradplan.getGradPlanItemList');
+	Route::post('configuration/gradplan/editSubGradPlan', 'GradplanController@editSubGradPlan')->name('gradplan.editSubGradPlan');
+	// end for Configuration all routes 
 	
 
 

@@ -105,4 +105,15 @@ class MappedController extends Controller
     {
         //
     }
+
+
+
+    public function getMappedCourseTopics($id){
+        $get_sced_code = MasterLspMapping::select('sced_course_id')->where('id', $id)->first();
+        //echo '<pre>'; print_r($get_sced_code); echo '</pre>'; exit;
+        $sced_sub_course_code = $get_sced_code['sced_course_id'][0].$get_sced_code['sced_course_id'][1];
+        $course_topics = MasterSced::select('*')->where('SCED_course_code', 'like' ,$sced_sub_course_code.'%')->get();
+        //echo '<pre>'; print_r($course_topics); echo '</pre>'; exit;
+        return view('admin.mapped.course', ['course_topics'=>$course_topics]);
+    }
 }
