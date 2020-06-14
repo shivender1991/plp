@@ -35,13 +35,10 @@ class MasterScedImport implements ToCollection, WithHeadingRow
             $insertdata->SCED_course_title               = trim($row['course_title']);
             $insertdata->SCED_course_description         = trim($row['course_description']);
             $insertdata->change_status                   = trim($row['change_status']);
-            $insertdata->map_field_data = json_encode( $row );
             $insertdata->created_by                      = Auth::user()->id;
             $insertdata->updated_by                      = Auth::user()->id;
             // save data in table
             $insertdata->save();  
-        }
-
-
+        }   
     }
 }

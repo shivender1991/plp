@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Admin\Model\MasterLspHeader;
 use DB;
 
 class GradplanController extends Controller
@@ -132,7 +133,7 @@ class GradplanController extends Controller
             );
         }else{
             $sub_id = $request->input('sub_id');
-            $result = DB::table('config_sub_grad_plans')->where('id', $sub_id)->update(['main_grad_plan_id'=>$main_grad_plan_id,'name' => $name, 'description' => $description,'updated_by'=>Auth::user()->id,'updated_at' => date('Y-m-d H:i:s')]);
+            $result = DB::table('config_sub_grad_plans')->where('id', $sub_id)->update(['main_grad_plan_id'=>$main_grad_plan_id,'name' => $name, 'description' => $description,'status'=>$status,'updated_by'=>Auth::user()->id,'updated_at' => date('Y-m-d H:i:s')]);
         }
         
         
@@ -179,40 +180,60 @@ class GradplanController extends Controller
 
     public function getGradPlanItemList(Request $request){
         $main_id = $request->input('main_id');
-        $subGradPlanDatas = DB::table('config_sub_grad_plans')->select('*')->where('main_grad_plan_id', $main_id)->where('status', 1)->get();
-
-        $j = 1;        
-          $outputHtml ='';   
-          $outputHtml.='
-                          <table class="table table-striped" id="table-2">
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>';
-            if(count($subGradPlanDatas) > 0){
-                foreach( $subGradPlanDatas as  $subGradPlanData){
-                    $outputHtml.='<tr>
-                                <td>'.$j.'</td>
-                                <td>'.$subGradPlanData->name.'</td>
-                                <td>'.$subGradPlanData->description.'</td>
-                                <td><a href="javascript:void(0);" onclick="editSubGradPlan('.$subGradPlanData->id.');">Edit</a></td>
-                                  </tr>';                  
-                   
-                $j++; }
-         
-
-                
-            }else{
-                $outputHtml.='<tr><td colspan="10"><center style="font-size: 18px;color: red;font-weight: bold;">Data not founds.</center></td></tr>';
+        if(strtolower($request->input('name')) == 'prerequisite'){
+            $coulumn_name = $request->input('name');
+            $lspHeaders=MasterLspHeader::all();
+            $output_pre = '';
+            $output_pre .= '<div class="card-body"><div class="form-group">';
+            $output_pre .= '<label id="input_type_header">Master Catalog Headers</label>';
+            $output_pre .= '<div class="input-group">';
+            $output_pre .= '<select id="master_catalog_headers" name="master_catalog_headers[]" multiple=""  data-height="100%" style="height: 100%;" class="form-control" onchange="showSelectedList()">';
+            if($lspHeaders){
+              foreach($lspHeaders as $lspHeader){
+                if($lspHeader['prerequisite_mapping_status'] == 1){
+                  $selected = 'selected';
+                }else{
+                  $selected = '';
+                }
+                $output_pre .= '<option value="'.$lspHeader['id'].'||||||'.$lspHeader['name'].'" '.$selected.' >'.$lspHeader['name'].'</option>';
+              }
             }
-            $outputHtml.=' </tbody>
-                      </table>';
-           echo $outputHtml; 
+            echo $output_pre .= '</select></div></div><div id="show_selected_list"></div></div>';
+        }else{
+            $subGradPlanDatas = DB::table('config_sub_grad_plans')->select('*')->where('main_grad_plan_id', $main_id)->where('status', 1)->get();
+
+            $j = 1;        
+            $outputHtml ='';   
+            $outputHtml .='<table class="table table-striped" id="table-2">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Name</th>
+                                  <th>Description</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>';
+              if(count($subGradPlanDatas) > 0){
+                  foreach( $subGradPlanDatas as  $subGradPlanData){
+                      $outputHtml .='<tr>
+                                  <td>'.$j.'</td>
+                                  <td>'.$subGradPlanData->name.'</td>
+                                  <td>'.$subGradPlanData->description.'</td>
+                                  <td><a href="javascript:void(0);" onclick="editSubGradPlan('.$subGradPlanData->id.');">Edit</a></td>
+                                    </tr>';                  
+                     
+                  $j++; }
+           
+
+                  
+              }else{
+                  $outputHtml .='<tr><td colspan="10"><center style="font-size: 18px;color: red;font-weight: bold;">Data not founds.</center></td></tr>';
+              }
+              $outputHtml .=' </tbody></table>';
+             echo $outputHtml;
+        }
+         
     }
 
 
@@ -245,8 +266,139 @@ class GradplanController extends Controller
 
     // grad plan mapping methods start
     public function mapping(){
-        $mainGradPlanRows = DB::table('config_main_grad_plans')->select('*')->where('status', 1)->get();
-        return view('admin.configuration.gradplan.mapping', ['mainGradPlanRows'=>$mainGradPlanRows]);
+        // $mainGradPlanRows = DB::table('config_main_grad_plans')->select('*')->where('status', 1)->get();
+        // return view('admin.configuration.gradplan.mapping', ['mainGradPlanRows'=>$mainGradPlanRows]);
+        $masterLspHeaders = MasterLspHeader::select('*')->where('prerequisite_mapping_status', 1)->get();
+        $configMainGradPlanDatas = DB::table('config_main_grad_plans')->select('*')->where('status', 1)->where('mapping_field', 1)->get();
+        return view('admin.configuration.gradplan.mapping',['masterLspHeaders'=>$masterLspHeaders, 'configMainGradPlanDatas'=>$configMainGradPlanDatas]);
+    }
+
+
+    public function hideShowMasterLSPHeaders(Request $request){
+      $id = $request->input('id');
+      $ColumnNames = MasterLspHeader::all();
+      $tableHeader="LSP Master Course Headers"; 
+      $outputHtml ='';   
+      $outputHtml.='<div class="table-responsive">
+                  <table class="table table-striped" id="table-2">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>'. $tableHeader.'</th>
+                      </tr>
+                    </thead>
+                    <tbody>'; 
+                    $j=0; 
+                  foreach( $ColumnNames as  $ColumnName){
+                  $checked=""; 
+
+                 if($ColumnName['prerequisite_mapping_status'] == '1'){
+                      $checked="checked";
+                 }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="checkbox-'.$j.'" onclick=updateMasterLSPHeader("'.$ColumnName['id'].'")>
+                        <label for="checkbox-'.$j.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$ColumnName['name'])).'</td>
+                      </tr>';   
+                      $j++;                    
+              }
+             $outputHtml.=' </tbody>
+                          </table>
+                        </div>';
+            echo $outputHtml; 
+    }
+
+    public function updateMasterLSPHeader(Request $request){
+      $id = $request->input('id');
+      $updataData = MasterLspHeader::find($id);
+              if($updataData['prerequisite_mapping_status'] =='1'){
+                 $udaptedvalue="0";
+              }else{
+                 $udaptedvalue="1";
+              }  
+                $updataData->prerequisite_mapping_status = $udaptedvalue;
+                $updataData->updated_by = Auth::user()->id;
+                if($updataData->save()){
+                    echo '1';
+                }else{
+                    echo '0';
+                }
+    }
+
+    public function getMasterLSPSelectedHeaderValue(Request $request){
+      $coulumn_name = $request->input('column_name');
+      $lsp_Datas=DB::table('mdl_course')->select('id', ''.$coulumn_name.'')->get();
+      $output = '';
+      if($lsp_Datas){
+        foreach($lsp_Datas as $lsp_Data){
+          $output .= '<option value="'.$lsp_Data['id'].'">'.$lsp_Data['name'].'</option>';
+        }
+      }
+    }
+
+
+    function setHeaderForMapping(Request $request){
+      $input_arrays = explode(',', $request->input('val_array'));
+
+      foreach($input_arrays as $input_id){
+        $updataData = MasterLspHeader::find($input_id);
+        if($updataData['prerequisite_mapping_status'] == '1'){
+           $udaptedvalue="0";
+        }else{
+           $udaptedvalue="1";
+        }  
+          $updataData->prerequisite_mapping_status = $udaptedvalue;
+          $updataData->updated_by = Auth::user()->id;
+          $updataData->save();
+      }
+      echo '1';
+      
+    }
+
+
+
+    public function hideShowMasterCatalogHeaders(Request $request){
+      $id = $request->input('id');
+      $ColumnNames = MasterLspHeader::all();
+      $tableHeader="LSP Master Course Headers"; 
+      $outputHtml ='';   
+      $outputHtml.='<div class="table-responsive">
+                  <table class="table table-striped" id="table-2">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>'. $tableHeader.'</th>
+                      </tr>
+                    </thead>
+                    <tbody>'; 
+                    $j=0; 
+                  foreach( $ColumnNames as  $ColumnName){
+                  $checked="";
+
+                 if($ColumnName['prerequisite_mapping_status'] == '1'){
+                      $checked="checked";
+                 }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="checkbox-'.$j.'" onclick=updateMasterLSPHeader("'.$ColumnName['id'].'")>
+                        <label for="checkbox-'.$j.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$ColumnName['name'])).'</td>
+                      </tr>';   
+                      $j++;                    
+              }
+             $outputHtml.=' </tbody>
+                          </table>
+                        </div>';
+            echo $outputHtml; 
     }
     // grad plan mapping methods end
 

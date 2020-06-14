@@ -8,6 +8,13 @@ use App\Admin\Model\MasterLspMapping;
 use App\Admin\Model\MasterSced;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Admin\Model\MasterScedHeader;
+use App\Admin\Model\MasterScedElementAttribute;
+use App\Admin\Model\MasterElement;
+use App\Admin\Model\MasterAttribute;
+use App\Admin\Model\MasterCourseCatalog;
+use App\Admin\Model\MasterStateSced;
+use App\Admin\Model\MasterStateHeader;
 
 class MappedController extends Controller
 {
@@ -50,7 +57,21 @@ class MappedController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $get_sced_code = MasterLspMapping::select('course_id','sced_course_id')->where('id', $id)->first();
+      
+        $masterCourseCatalog = MasterCourseCatalog::select('*')->where('id',$get_sced_code['course_id'])->get();
+        
+        $masterScedData = MasterSced::select('*')->where('SCED_course_code',$get_sced_code['sced_course_id'])->first();
+
+        $masterStateSced = MasterStateSced::select('*')->where('SCED_course_code',$get_sced_code['sced_course_id'])->first();
+
+        $elements       = MasterElement::all();
+        $attributes     = MasterAttribute::all();
+        $masterScedHeader  = MasterScedHeader::all();
+        $masterStateHeaders  = MasterStateHeader::all();
+       
+        return view('admin.mapped.view',['masterCourseCatalog'=>$masterCourseCatalog, 'masterScedData'=>$masterScedData, 'elements'=>$elements, 'attributes'=>$attributes,'masterScedHeaders'=>$masterScedHeader,'masterStateHeaders'=>$masterStateHeaders]);
     }
 
     /**
@@ -61,10 +82,8 @@ class MappedController extends Controller
      */
     public function view()
     {
-
-         //$lspMappedDatas=MasterLspMapping::all();
          $lspMappedDatas = DB::table('master_sceds')
-            ->join('master_lsp_mappings', 'master_sceds.SCED_course_code', '=', 'master_lsp_mappings.sced_course_id')
+            ->join('master_lsp_mappings', 'master_sceds.SCED_course_code', '=', 'master_lsp_mappings.sced_course_code')
             ->select('*')
             ->get();
          $lspMappedData=MasterLspMapping::where('SCED_course_code');
@@ -105,8 +124,6 @@ class MappedController extends Controller
     {
         //
     }
-
-
 
     public function getMappedCourseTopics($id){
         $get_sced_code = MasterLspMapping::select('sced_course_id')->where('id', $id)->first();

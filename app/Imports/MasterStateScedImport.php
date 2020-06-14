@@ -42,7 +42,7 @@ class MasterStateScedImport implements ToCollection, WithHeadingRow
             }
 
             $insertdata->format                            = trim($this->format);
-            $insertdata->state_field                       = json_encode($row);
+          //  $insertdata->state_field                       = json_encode($row);
             $insertdata->created_by                        = Auth::user()->id;
             $insertdata->updated_by                        = Auth::user()->id;       
             $insertdata->save();        

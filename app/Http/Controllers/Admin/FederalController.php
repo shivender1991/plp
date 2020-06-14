@@ -12,6 +12,8 @@ use App\Http\Requests\MappingformValidation;
 use App\Http\Requests\ScedDataformValidation;
 use Excel;
 use App\Imports\MasterScedImport;
+use App\Admin\Model\MasterScedHeader;
+use App\Admin\Model\MasterScedElementAttribute;
 
 
 
@@ -50,11 +52,12 @@ class FederalController extends Controller
      */
     public function mapping($id)
     {
-        $MasterSCEDData = MasterSced::find($id);
-        $elements = MasterElement::where('status', 1)->get();
-        $attributes = MasterAttribute::where('status', 1)->get();
-        //echo '</pre>'; print_r($elements); echo '<pre>'; exit;
-        return view('admin.federal.mapping',['MasterSCEDData'=>$MasterSCEDData, 'elements'=>$elements, 'attributes'=>$attributes]);
+        $masterScedData = MasterSced::find($id);
+        $elements       = MasterElement::where('federal_element_attribute_screen_status', 1)->get();
+        $attributes     = MasterAttribute::where('federal_element_attribute_screen_status', 1)->get();
+        $masterScedHeader  = MasterScedHeader::where('federal_element_attribute_screen_status', 1)->get();
+       
+        return view('admin.federal.mapping',['masterScedData'=>$masterScedData, 'elements'=>$elements, 'attributes'=>$attributes,'masterScedHeaders'=>$masterScedHeader]);
     }
 
 /**
@@ -64,44 +67,31 @@ class FederalController extends Controller
      */
     public function storemapping(Request $request,$id)
     {
-    
-    //echo '<pre>'; print_r( json_encode( $request->all() ) ); echo '</pre>'; exit;
-    //  $validatedData = $request->validate([
-    //     'scedcourse'=>'required',
-    //     'scedtitle'=>'required',
-    //     'sceddesc'=>'required',
-    //     'changestatus'=>'required',
-    //     'courselevel'=>'required',
-    //     'carnegieunit'=>'required',
-    //     'gradespan'=>'required',
-    //     'sequnceofcourse'=>'required',
-    //     'gradespan'=>'required'
-    // ]);
-      // call model
+
+        $allFields=$request->input('SCED_course_code');
+       // die;
+   
       $updatedata = MasterSced::find($id);
+      $allHeadersArray=array();
+        $masterScedHeaders  = MasterScedHeader::all('name');
+        $elements       = MasterElement::where('status', 1)->get();
+        $attributes     = MasterAttribute::where('status', 1)->get();
+        
 
-      // received data from post
-      // $updatedata->data_course_level                            = $request->input('courselevel');
-      // $updatedata->carnegie_unit_credit                         = $request->input('carnegieunit');
-      // $updatedata->grade_span                                   = $request->input('gradespan');
-      // $updatedata->sequence_of_course                           = $request->input('sequnceofcourse');
-      // $updatedata->SCED_creer_cluster                           =  join('|',$request->input('scedcarrier'));
-      // $updatedata->additional_credit_type                       =  join('|',$request->input('credittype'));
-      // $updatedata->course_GPA_applicability                     =  join('|',$request->input('coursegpa'));
-      // $updatedata->course_funding_program                       =  join('|',$request->input('coursefunding'));
-      // $updatedata->high_school_course_requirement               = $request->input('highschool');
-      // $updatedata->instruction_language                         =  join('|',$request->input('instructionlang'));
-      // $updatedata->curriculum_frame_type                        =  join('|',$request->input('curriculamfram'));
-      // $updatedata->course_aligned_with_standards                = $request->input('coursealignstan');
-      // $updatedata->course_certification_description             =  join('|',$request->input('coursecertificate'));
-      // $updatedata->k12_end_of_course_requirement                = join('|',$request->input('k12endofcourse'));
-      // $updatedata->course_applicable_education_level            = join('|',$request->input('courseapplicable'));
-      // $updatedata->NCAA_eligibility                             = $request->input('ncca');
-      // $updatedata->course_section_instructional_delivery_mode   = join('|',$request->input('coursesectioninst'));
-      // $updatedata->family_and_consumer_science_course_indicator = $request->input('familyandconsumer');
-      // $updatedata->work_based_learning_opportunity_type         = join('|',$request->input('workbasedlearning'));
-
-      $updatedata->map_field_data = json_encode( $request->all() );
+        foreach($masterScedHeaders  as $masterScedHeader){
+                $allHeadersArray[]=$masterScedHeader['name'];
+        }
+        foreach($elements  as $element){
+                $allHeadersArray[]=$element['input_type_name'];
+        }
+        foreach($attributes  as $attribute){
+                $allHeadersArray[]=$attribute['input_type_name'];
+        }
+        //print_r($allHeadersArray);
+        foreach($allHeadersArray as $allHeader){
+            $updatedata->$allHeader=$request->input(''.$allHeader.'');
+        }
+     // $updatedata->map_field_data = json_encode( $request->all() );
       $updatedata->created_by = Auth::user()->id;
       $updatedata->updated_by = Auth::user()->id;
       // save data in table
@@ -158,8 +148,6 @@ class FederalController extends Controller
             $import->setFormat($format);
             Excel::import($import, request()->file('select_file'));
 
-
-       // Excel::import(new MasterScedElementImport, request()->file('select_file'));
         return back()->with('sucess', 'Excel Data Imported successfully');
 
         }elseif($request->input('format') == 'api'){
@@ -176,8 +164,11 @@ class FederalController extends Controller
     public function view()
     { 
 	
-		 $SCEdData=MasterSced::all();
-		 return view('admin.federal.list',['scedData'=>$SCEdData]);
+		    $SCEdData=MasterSced::all();
+        $getFederalHeaders = MasterScedHeader::where('federal_list_status', 1)->get();
+        //echo "<pre>";
+      //  print_r($getFederalHeaders);die;
+		return view('admin.federal.list',['scedDatas'=>$SCEdData,'federal_headers'=>$getFederalHeaders]);
     }
 
     /**
@@ -260,104 +251,207 @@ class FederalController extends Controller
         //
     }
 
-	
-	/**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function assignRole(Request $request)
-    {
-		// get all role id
-		$roleassign = $request->input('roleassign');
-		// get user id with mapping multiple role id
-		$user_id = $request->input('user_id');
-		DB::table('user_role')
-			->where('user_id', $user_id)
-			->update(['status' => 0]);
-		// if condition check not empty 
-		if(!empty($roleassign) && !empty($user_id)){
-				foreach($roleassign as $rolekey => $roleId){
-					if(strtolower($roleId) =='on') {
-						$roleId=$rolekey;
-						$users = DB::table('user_role')
-								 ->select('status')
-								 ->where('user_id', $user_id)
-								 ->where('role_id', $roleId)
-								 ->get();
-						if(count($users) > 0){
-							 DB::table('user_role')
-								->where('user_id', $user_id)
-								->where('role_id', $roleId)
-								->update(['status' => 1]);
-							
-						}else{
-							 DB::table('user_role')->insert([
-								'user_id' => $user_id,
-								'role_id' => $roleId,
-								'status' => 1,
-								'created_by' => Auth::user()->id,
-								'updated_by' => Auth::user()->id
-							]);
-						} 
-								
-					}
-				}
-			return redirect('admin/federal/view')->with('sucess', 'User Role mapping has been mapped successfully!!');		
-		}else{
-			return redirect('admin/federal/view')->with('error', 'You must check at least one role!!!');
-		}
-	}
-	// active or inactive function
-	public function ajaxCallActiveDeactive(Request $request)
-	{
-		$user_id = $request->input('id');
-		$userDetails=Userdetail::find($user_id);
-		if($userDetails->status == '1'){
-			$status=0;
-		}else{
-			$status=1;
-		}
-		
-		$userDetails->status			 = $status;
-		$userDetails->updated_by		 = Auth::user()->id;
-		if($userDetails->save()){
-		  return redirect('admin/federal/view')->with('sucess', 'Data has been updated successfully!!');
-		}else{
-		  return redirect('admin/federal/view')->with('error', 'Data has been not updated please try agian!!');
-		}		
-	}
-	
-	// for assign pop function
-	public function userajaxCallPopUp(Request $request)
-	{
-	
-		$user_id = $request->input('id');
-		$roleData=Role::where('status',1)
-				->orderBy('id', 'asc')
-				 ->get();
-		$data=array();
-		foreach($roleData as $key=>$roleDatas){
-			 $roleId=$roleDatas['id'];
-			$users = DB::table('user_role')
-								->select('status')
-								->where('user_id', $user_id)
-								->where('role_id', $roleId)
-								->orderBy('id', 'desc')
-								->get();
-								
-			if(!empty($users[0]->status)){
-				$status=$users[0]->status;
-			}else{
-				$status=0;
-			}
-			$data['viewData'][$key]['roledata']=$roleDatas;
-			$data['viewData'][$key]['status']=$status;
-		}
-			echo json_encode($data);
-			exit;	 
-	}
-	
+function activeDeactiveFederalColumn(Request $request){
 
-}
+      $sced_course_id = $request->input('id');
+      $ColumnNames = MasterScedHeader::all();
+      $tableHeader="Master SCED Header"; 
+      $outputHtml ='';   
+      $outputHtml.='<div class="table-responsive">
+                  <table class="table table-striped" id="table-2">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>'. $tableHeader.'</th>
+                      </tr>
+                    </thead>
+                    <tbody>'; 
+                    $j=0; 
+                  foreach( $ColumnNames as  $ColumnName){
+                  $checked=""; 
+
+                 if($ColumnName['federal_list_status'] == '1'){
+                      $checked="checked";
+                 }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="checkbox-'.$j.'" onclick=federalactiveDeactiveUpdateColumn("'.$ColumnName['id'].'")>
+                        <label for="checkbox-'.$j.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$ColumnName['name'])).'</td>
+                      </tr>';   
+                      $j++;                    
+              }
+             $outputHtml.=' </tbody>
+                          </table>
+                        </div>';
+            echo $outputHtml;
+    }
+
+       function federalactiveDeactiveUpdateColumn(Request $request){
+    
+          if( !empty($request->input('id')) ){
+                $id=$request->input('id');
+              
+                $updataData = MasterScedHeader::find($id);
+                $columnName=$updataData['federal_list_status'];
+                  if($updataData['federal_list_status'] =='1'){
+                     $udaptedvalue="0";
+                  }else{
+                     $udaptedvalue="1";
+                  }             
+                  $updataData->federal_list_status = $udaptedvalue;
+
+                    $updataData->created_by = Auth::user()->id;
+                    $updataData->updated_by = Auth::user()->id;
+                if($updataData->save()){
+                    return response()->json([
+                    'msg'=>'Updated Successfully!'
+                    ]);
+                }else{
+                    return response()->json([
+                        'msg'=>'Something went wrong!'
+                    ]);
+                }
+            }
+        }
+
+
+
+    static function federalWithElementAttributeMapping()
+    {
+        $allHeaders=array();
+        $masterScedHeaders  = MasterScedHeader::all();
+        $elements       = MasterElement::where('federal_element_attribute_screen_status', 1)->get();
+        $attributes     = MasterAttribute::where('federal_element_attribute_screen_status', 1)->get();
+        $tableHeader="List of fields"; 
+        $outputHtml ='';   
+        $outputHtml.='<div class="table-responsive">
+                  <table class="table table-striped" id="table-2">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>'. $tableHeader.'</th>
+                      </tr>
+                    </thead>
+                    <tbody>'; 
+                    $j=0; 
+                  foreach($masterScedHeaders as  $masterScedHeader){
+                  $checked=""; 
+                  $value='01';
+                        if($masterScedHeader['federal_element_attribute_screen_status'] == '1'){
+                          $checked="checked";
+                        }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="masterScedHeader-'.$j.'" onclick=federalElemntAttributeactivedeactive("'.$value.'#######'.$masterScedHeader['id'].'")>
+                        <label for="masterScedHeader-'.$j.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$masterScedHeader['name'])).'</td>
+                      </tr>';   
+                      $j++;                    
+              }
+              $i=0;
+              foreach($elements as  $element){
+                $value="02";
+                  $checked=""; 
+                        if($element['federal_element_attribute_screen_status'] == '1'){
+                          $checked="checked";
+                        }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="element-'.$i.'" onclick=federalElemntAttributeactivedeactive("'.$value.'#######'.$element['id'].'")>
+                        <label for="element-'.$i.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$element['name'])).'</td>
+                      </tr>';   
+                      $i++;                    
+              }
+              $k=0;
+              foreach($attributes as  $attribute){
+                $value="03";
+                  $checked=""; 
+                        if($attribute['federal_element_attribute_screen_status'] == '1'){
+                          $checked="checked";
+                        }  
+                  $outputHtml.='<tr>
+                    <td class="text-center pt-2">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input"  '.$checked.' name="column_update_checkbox"
+                          id="attribute-'.$k.'" onclick=federalElemntAttributeactivedeactive("'.$value.'#######'.$attribute['id'].'")>
+                        <label for="attribute-'.$k.'" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>'.ucwords(str_replace('_',' ',$attribute['name'])).'</td>
+                      </tr>';   
+                      $j++;                    
+              }
+             $outputHtml .='</tbody>
+                          </table>
+                        </div>';
+            echo $outputHtml;
+       
+        }
+
+         function federalElemntAttributeactivedeactive(Request $request){
+    
+          if( !empty($request->input('id')) ){
+                $id=$request->input('id');
+
+                $data=explode('#######',$id);
+               // die;
+              if($data[0] =='01'){
+                $updataData = MasterScedHeader::find($data[1]);
+                $columnName=$updataData['federal_element_attribute_screen_status'];
+                  if($updataData['federal_element_attribute_screen_status'] =='1'){
+                     $udaptedvalue="0";
+                  }else{
+                     $udaptedvalue="1";
+                  }
+
+              }else if($data[0] =='02'){
+                $updataData = MasterElement::find($data[1]);
+                $columnName=$updataData['federal_element_attribute_screen_status'];
+                  if($updataData['federal_element_attribute_screen_status'] =='1'){
+                     $udaptedvalue="0";
+                  }else{
+                     $udaptedvalue="1";
+                  }
+
+              }else if($data[0] =='03'){
+                $updataData = MasterAttribute::find($data[1]);
+                $columnName=$updataData['federal_element_attribute_screen_status'];
+                  if($updataData['federal_element_attribute_screen_status'] =='1'){
+                     $udaptedvalue="0";
+                  }else{
+                     $udaptedvalue="1";
+                  }
+
+
+              }
+                             
+                  $updataData->federal_element_attribute_screen_status = $udaptedvalue;
+
+                    $updataData->created_by = Auth::user()->id;
+                    $updataData->updated_by = Auth::user()->id;
+                if($updataData->save()){
+                    return response()->json([
+                    'msg'=>'Updated Successfully!'
+                    ]);
+                }else{
+                    return response()->json([
+                        'msg'=>'Something went wrong!'
+                    ]);
+                }
+            }
+        }
+    }

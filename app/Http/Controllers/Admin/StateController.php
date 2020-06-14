@@ -17,7 +17,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-
 class StateController extends Controller
 {
      public function __construct()
@@ -70,7 +69,7 @@ class StateController extends Controller
             $updatedata->$columname = $request->input(''.$columname.'');
        
         }
-        $updatedata->state_field = json_encode( $request->all() );
+       // $updatedata->state_field = json_encode( $request->all() );
         $updatedata->updated_by = Auth::user()->id;
 
         // save data in table
@@ -91,8 +90,8 @@ class StateController extends Controller
     public function view()
     {
         $tablecolumnHeader = MasterStateHeader::all();
-        //$statescedData=MasterStateSced::all()->limit(10);
-         $statescedData = MasterStateSced::select('*')->limit(10)->get();
+        // $statescedData=MasterStateSced::all();
+        $statescedData = MasterStateSced::select('*')->limit(10)->get();
         //echo '<pre>'; print_r($statescedData); echo '</pre>'; exit;
         return view('admin.state.list',['statescedData'=>$statescedData,'tablecolumnHeader'=>$tablecolumnHeader]);
     }
@@ -146,10 +145,12 @@ class StateController extends Controller
             $import->setFormat($format);
             $headings = (new HeadingRowImport)->toArray(request()->file('select_file'));
             $headerData = $headings[0][0];
-            $countexcelHeader = count($headerData);
+           //print_r($headerData);
+            $countexcelHeader = count($headerData)-1;
+         
             $tablecolumnHeader = MasterStateHeader::all();
             $countTableColumn=count($tablecolumnHeader);
-            
+ 
             if($countexcelHeader != $countTableColumn){
                 foreach($headerData as $headerDatas)
                 {
@@ -184,7 +185,7 @@ class StateController extends Controller
                     $after_column = $stateTableHeaders[$i-1]->name;
                     $after_column1 = ''.$after_column.'';
                    schema::table('master_state_sceds',function($col)  use ($fieldName,$after_column1){
-                     $col->text($fieldName,)->nullable()->after($after_column1);
+                     $col->string($fieldName,'512')->nullable()->after($after_column1);
             
                  });
                 } 
@@ -352,7 +353,6 @@ class StateController extends Controller
 
 
 
-
     public function showAllColumnsForStateListOnPopUp(){
         $tablecolumnHeaders = MasterStateHeader::where('status', 1)->get();
           $j = 0;        
@@ -437,13 +437,8 @@ class StateController extends Controller
                         $output .= '<td>'.$i.'</td>';
                     foreach($tablecolumnHeader as $tablecolumnHeaders){
                         $name = $tablecolumnHeaders['name'];
-                        $output .= '<td data-toggle="tooltip" data-placement="top">'.$statescedDatas[$name].'</td>';
-                    
-
-                    
-                 
-                 
-            } 
+                        $output .= '<td data-toggle="tooltip" data-placement="top">'.Str::limit($statescedDatas[$name], 50).'</td>';
+                    } 
             $output .= '<td><a class="btn btn-primary" href="'.route('state.mapping', ['id' => $statescedDatas['id']]).'">Map </a></td>';
            $output .= '</tr>';
                

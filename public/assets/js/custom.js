@@ -147,7 +147,7 @@ function displayFields(val){
 
 $(function() {
     $('#fieldnames').change(function(e) {
-
+      $('.lsp-showdatatable').html('');
         var selected = $(e.target).val();
           $('#datashow').html('');
            $('.ShowDataListOfList').html('');
@@ -182,8 +182,7 @@ $(document).ready(function(){
 
 
 
-
-  // for federal  and state datas
+ // for federal  and state datas
 function FederalStateData(id){
    $('#federalData').html('');
    $('#federal_state_selected_rows').html('');
@@ -203,7 +202,6 @@ function FederalStateData(id){
               id: id,
             },
             success: function(result){
-             // $('.federalData,').attr('id', 'federalData');
               var json_obj=JSON.parse(result);
               var output='';
               output+='<div class="form-group">';
@@ -224,6 +222,7 @@ $(function() {
     $('#federalData').change(function(e) {
        $('#federal_state_selected_rows').html('');
        $('#state_data_federal_listing').html('');
+        $('#federal_state_showdatatable').html('');
         var selected = $(e.target).val();
         var state_federal = $("input[name=option]:checked").val();
        
@@ -242,56 +241,18 @@ $(function() {
             success: function(result){
             //  console.log(result);
              $('#state_data_federal_listing').html(result);
+             return false;
             }
           });
         }
     }); 
 });
 
-function getDataSelectedDropDown(value){
-    $('.ShowDataListOfList').html('');
-    var lsp_selected_field=$('#fieldnames').val();
-          if(value){
-              $.ajaxSetup({
-                headers: {
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-              }
-          });
-          $.ajax({
-            url: "getDataFromSelectedDropDown",
-            method: 'POST',
-            data: {
-                fieldcolumn: value,lsp_selected_field:lsp_selected_field
-              },
-            success: function(result){
-            var returndata=getSelectedTableRows(value,lsp_selected_field);
-              //console.log(result);
-              //return false;
-            var jsoandata=JSON.parse(result);
-            var data=value.split('||||||');
-            //console.log(data[0]);
-            $.each(lsp_selected_field, function (columnName, columnValue) {
-              $.each(jsoandata, function (index, value) { 
-                  //console.log(index);
-                  //console.log('---------------');
-                  //console.log(columnValue);
-
-                  if(index == columnValue){
-                      $('.'+columnValue).html('');
-                      $('.'+columnValue).html(value);
-                  }
-                });
-              });
-           
-            }
-          });
-      }
-  }
 
   // get table after change lsp drop down field
-function getSelectedTableRows(value,lsp_selected_field){
-   // $('.ShowDataListOfList').html('');
-  
+function getSelectedTableRows(value,lsp_selected_field)
+{
+    $('.lsp-showdatatable').html('');
           if(value){
               $.ajaxSetup({
                 headers: {
@@ -305,16 +266,63 @@ function getSelectedTableRows(value,lsp_selected_field){
                 fieldcolumn: value,lsp_selected_field:lsp_selected_field
               },
             success: function(result){
+              //console.log(result);
                $('.lsp-showdatatable').html(result);
               return false;
             }
           });
       }
   }
+function getDataSelectedDropDown(value){
+var lsp_selected_field=$('#fieldnames').val();
+var allValue=[];
+ $.each(lsp_selected_field, function (columnName, columnValue) { 
+    var selecteValue = $("select[name="+columnValue+"").val();
+    if(selecteValue != " "){
+      allValue.push(selecteValue);
+    }
+    
+  });
+    $('.ShowDataListOfList').html('');
+          if(value){
+              $.ajaxSetup({
+                headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+          });
+          $.ajax({
+            url: "getDataFromSelectedDropDown",
+            method: 'POST',
+            data: {
+                fieldcolumn: value,lsp_selected_field:lsp_selected_field,allValue:allValue
+              },
+            success: function(result){
+
+              console.log(result);
+
+          var returndata=getSelectedTableRows(value,lsp_selected_field);
+            var jsoandata=JSON.parse(result);
+            var data=value.split('||||||');
+            $.each(lsp_selected_field, function (columnName, columnValue) {
+              $.each(jsoandata, function (index, value) { 
+                  if(index == columnValue){
+                      $('.'+columnValue).html('');
+                      $('.'+columnValue).html(value);
+                  }
+                });
+              });
+           return false;
+            }
+          });
+      }
+  }
 
 
-function getDataSelectedStateFederalDropDown(value){
-  //alert(value);
+
+
+function getDataSelectedStateFederalDropDown(value)
+{
+
      var state_federal = $("input[name=option]:checked").val();
      var statefederalDropDown = $("#federal_state_drop_down").val();
      var data=value.split('||||||');
@@ -332,7 +340,8 @@ function getDataSelectedStateFederalDropDown(value){
                 fieldcolumn: value,state_federal:state_federal,statefederalDropDown:statefederalDropDown
               },
             success: function(result){
-              var returndata=getDataFromSelectedStateFeTable(value,state_federal,statefederalDropDown);
+              $('#add_lsp_button').show();
+            var returndata=getDataFromSelectedStateFeTable(value,state_federal,statefederalDropDown);
             var jsoandata=JSON.parse(result);
               $.each(statefederalDropDown, function (columnName, columnValue) {
               $.each(jsoandata, function (index, value) {
@@ -342,6 +351,7 @@ function getDataSelectedStateFederalDropDown(value){
                   }
                 });
               });
+              return false;
             }
           });
         }
@@ -363,7 +373,7 @@ function getDataFromSelectedStateFeTable(value,state_federal,statefederalDropDow
                 fieldcolumn: value,state_federal:state_federal,statefederalDropDown:statefederalDropDown
               },
             success: function(result){
-              //console.log(result);
+              $('body').tooltip({selector: '[data-toggle="tooltip"]'});
                $('#federal_state_showdatatable').html(result);
               return false;
             }
@@ -374,11 +384,25 @@ function getDataFromSelectedStateFeTable(value,state_federal,statefederalDropDow
 // mapped for lsp data with federal and state
 
 $('#add_lsp_button').click('on',function(){
+  $("#after_mapped_data_show").html('');
+
   var course_id=$("input[name=lsp_unique_id]:checked").val();
   var sced_course_id=$("input[name=federal_state_unique_id]:checked").val();
-   var state_federal = $("input[name=option]:checked").val();
+  var state_federal = $("input[name=option]:checked").val();
 
-  if(course_id !=""  && sced_course_id !=""){
+if(course_id ==undefined  && sced_course_id ==undefined){
+    alert('Please select LSP data row and Fedral/State Data row');
+    return false;
+
+ } else if(course_id ==undefined){
+    alert('Please select LSP data row');
+    return false;
+
+ }else if(sced_course_id ==undefined){
+    alert('Please select Fedral/State Data row');
+    return false;
+
+ }else{
 
      $.ajaxSetup({
                 headers: {
@@ -390,31 +414,38 @@ $('#add_lsp_button').click('on',function(){
               type: 'post',
               data:{sced_course_id:sced_course_id, course_id:course_id},
               success: function(result){
-                   //console.log(result);
-                   alert(result.msg);
-                   fetchTableAfterMappedLspWithFederalState(state_federal,course_id,sced_course_id);
-                   return false;
+                  
+                  alert(result.msg);
+                  $('#setting_for_table_field').show();
+                  fetchTableAfterMappedLspWithFederalState(state_federal,course_id,sced_course_id);
+                  return false;
               }
           });
-    }else{
+
+    } /*else{
       alert('Please select LSP data row and Fedral/State Data row');
       return false;
-    }
+    }*/
       
 });
 
 
 function fetchTableAfterMappedLspWithFederalState(state_federal="",course_id,sced_course_id){
-   
-        checkxCSRFToken();
+    $("#after_mapped_data_show").html('');
+       $.ajaxSetup({
+                headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+          });
           $.ajax({
             url: "fetchTableAfterMappedLspWithFederalState",
             type: 'post',
             data:{state_federal:state_federal, course_id:course_id,sced_course_id:sced_course_id},
             success: function(result){
-              console.log(result);
+             // alert(result);
+             // console.log(result);
              // $("#modal_center").modal("show");
-                // $("#modal_center .modal-body").html(result);
+                 $("#after_mapped_data_show").html(result);
                   return false;
 
             }
@@ -423,14 +454,19 @@ function fetchTableAfterMappedLspWithFederalState(state_federal="",course_id,sce
   
 }
 
-// start active / deactive column for function
-function activeDeactiveColumn(){
+
+
+
+// start pop up active / deactive column for function
+function activeDeactiveColumn(id){
         checkxCSRFToken();
           $.ajax({
             url: "activeDeactiveColumn",
             type: 'post',
-           // data:{hidden_header_id:hidden_header_id, others_input:others_input},
+            data:{id:id},
             success: function(result){
+              //console.log(result);
+             // return false;
               $("#modal_center").modal("show");
                  $("#modal_center .modal-body").html(result);
                   return false;
@@ -439,22 +475,171 @@ function activeDeactiveColumn(){
 
         });
   }
+// start pop up active / deactive column for function
+function federalWithElementAttributeMapping(){
+
+        checkxCSRFToken();
+          $.ajax({
+            url: "../federalWithElementAttributeMapping",
+            type: 'post',
+           // data:{id:id},
+            success: function(result){
+              //console.log(result);
+             // return false;
+              $("#modal_center").modal("show");
+              $("#modal_center .modal-body").html(result);
+              return false;
+
+            }
+
+        });
+  }
+
+  // start pop up active / deactive column for function
+function activeDeactiveFederalColumn(){
+        checkxCSRFToken();
+          $.ajax({
+            url: "activeDeactiveFederalColumn",
+            type: 'post',
+            //data:{id:id},
+            success: function(result){
+              $("#modal_center").modal("show");
+              $("#modal_center .modal-body").html(result);
+              return false;
+
+            }
+
+        });
+  }
 
 
-  //function activeDeactiveColumnHeader()
-// end active / deactive column for function
+ // end pop up active / deactive column for function
+  // start active / deactive update agiant column 
+function activeDeactiveUpdateColumn(id)
+{
+   var dataarray=id.split('#######');
+    // for federal or state value 
+   var state_federal = $("input[name=option]:checked").val();
+   var select_value = $("select[name=fieldname]").val();
+   var statefederalDropDown = $("#federal_state_drop_down").val();
+// lsp value
+   var lspvalue = $("select[name=lspFieldName]").val();
+   var lsp_selected_field=$('#fieldnames').val();
 
-// start check cross csrf token for every ajax function
-function checkxCSRFToken(){
-
-   $.ajaxSetup({
-                headers: {
+        if(id !=""){
+            $.ajaxSetup({
+                  headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            });
-}
-// end check cross csrf token for every ajax function
+             });
 
+          $.ajax({
+            url: "activeDeactiveUpdateColumn",
+            type: 'post',
+            data:{id:id},
+            success: function(result){
+              if(dataarray[0] =='01' || dataarray[0] =='02'){
+                    getDataFromSelectedStateFeTable(select_value,state_federal,statefederalDropDown);
+                }else{
+                    getSelectedTableRows(lspvalue,lsp_selected_field);
+                }
+                  return false;
+            }
+        });
+      }
+  }
+ // start active / deactive update agiant column 
+function federalactiveDeactiveUpdateColumn(id)
+{
+    if(id !=""){
+            $.ajaxSetup({
+                  headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+             });
+          $.ajax({
+            url: "federalactiveDeactiveUpdateColumn",
+            type: 'post',
+            data:{id:id},
+            success: function(result){
+               alert(result.msg);
+              window.location.reload();
+                  return false;
+            }
+        });
+
+      }
+  }
+// start active / deactive update agiant column 
+function federalElemntAttributeactivedeactive(id)
+{
+    if(id !=""){
+            $.ajaxSetup({
+                  headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+             });
+          $.ajax({
+            url: "../federalElemntAttributeactivedeactive",
+            type: 'post',
+            data:{id:id},
+            success: function(result){
+               alert(result.msg);
+              window.location.reload();
+                  return false;
+            }
+        });
+
+      }
+  }
+
+
+  // start active / deactive update agiant column 
+
+function settingForAfterAddMappingLspwithFederalState(){
+
+      checkxCSRFToken();
+      var state_federal = $("input[name=option]:checked").val();
+      $.ajax({
+        url: "settingForAfterAddMappingLspwithFederalState",
+        type: 'post',
+        data:{state_federal:state_federal},
+        success: function(result){
+          console.log(result);
+          $("#modal_center").modal("show");
+          $("#modal_center .modal-body").html(result);
+          return false;
+        }
+    });
+}
+
+// start active / deactive update agiant column 
+function settingForAfterAddMappingColumnUpdate(id)
+{
+
+  var course_id=$("input[name=lsp_unique_id]:checked").val();
+  var sced_course_id=$("input[name=federal_state_unique_id]:checked").val();
+  var state_federal = $("input[name=option]:checked").val();
+    if(id !=""){
+            $.ajaxSetup({
+                  headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+             });
+          $.ajax({
+            url: "settingForAfterAddMappingColumnUpdate",
+            type: 'post',
+            data:{id:id},
+            success: function(result){
+               alert(result.msg);
+              //return false;
+                fetchTableAfterMappedLspWithFederalState(state_federal,course_id,sced_course_id);
+                  return false;
+            }
+        });
+
+      }
+  }
 
 // start ajax request for popup
     function addOthersValue(){
@@ -545,6 +730,7 @@ function showOthersInput(val) {
 }
 
 
+
 function showAllColumnsForStateListOnPopUp(){
   
   checkxCSRFToken();
@@ -553,7 +739,7 @@ function showAllColumnsForStateListOnPopUp(){
             type: 'post',
            // data:{hidden_header_id:hidden_header_id, others_input:others_input},
             success: function(result){
-                 $("#modal_center").modal("show");
+              $("#modal_center").modal("show");
                  $("#modal_center .modal-body").html(result);
                   return false;
 
@@ -575,14 +761,30 @@ function showHideStateListColumn(val){
              $('.state-list').html(result);
              //window.location.reload();
               console.log(result);
+                 //var json_result = JSON.parse(result); 
+                 // $('#t_head').html('');
+                 // $('#t_body').html('');
+                 // $('#t_head').html(json_result.t_head);
+                 // $('#t_body').html(json_result.t_body);
                   return false;
 
             }
 
         });
 }
-
 // end pop up
+
+
+// start check cross csrf token for every ajax function
+function checkxCSRFToken(){
+
+   $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+}
+// end check cross csrf token for every ajax function
 
 // funnction for grad plan (configuration) start
 function showAddNewPopUpForGradPlanConfig(){
@@ -658,13 +860,19 @@ function getGradPlanItemList(name, id, sr, total_sr){
     $('#grad_plan_item'+i).removeClass('btn-primary');
   }
   $('#grad_plan_item'+sr).addClass('btn-primary');
+  if(name.toLowerCase() == 'prerequisite'){
+    $('#add_new_button').hide();
+  }else{
+    $('#add_new_button').show();
+  }
   checkxCSRFToken();
           $.ajax({
             url: "getGradPlanItemList",
             type: 'post',
-           data:{main_id:id},
+           data:{main_id:id,name:name},
             success: function(result){
               console.log(result);
+
              $('#sub_grad_data_show').html('');
              $('#sub_grad_data_show').html(result);
              $('#show_right_side_div').show();
@@ -751,5 +959,128 @@ function editSubGradPlan(id){
 
 // funnction for grad plan (configuration) end
 
+
+// function for grad plan mapping start
+function hideShowMasterLSPHeaders(val){
+  $("#modal_center").modal("show");
+  checkxCSRFToken();
+          $.ajax({
+            url: "hideShowMasterLSPHeaders",
+            type: 'post',
+            data:{id:val},
+            success: function(result){
+              $("#modal_center").modal("show");
+              $("#modal_center .modal-body").html(result);
+              return false;
+
+            }
+
+        });
+
+}
+
+function updateMasterLSPHeader(val){
+  checkxCSRFToken();
+          $.ajax({
+            url: "updateMasterLSPHeader",
+            type: 'post',
+            data:{id:val},
+            success: function(result){
+              //alert(result); return false;
+              $("#modal_center").modal("hide");
+              //$("#modal_center .modal-body").html(result);
+              window.location.reload();
+              return false;
+
+            }
+
+        });
+}
+
+function getMasterLSPSelectedHeaderValue(val){
+  checkxCSRFToken();
+          $.ajax({
+            url: "getMasterLSPSelectedHeaderValue",
+            type: 'post',
+            data:{column_name:val},
+            success: function(result){
+              //console.log(result); return false;
+              $('#fieldname_value').html('');
+              $('#fieldname_value').html(result);
+              return false;
+
+            }
+
+        });
+}
+
+// $('#master_catalog_headers').on('change',function() {
+//     alert($(this).val());
+//     console.log($(this).val());
+//   });
+
+function showSelectedList(){
+  $('#show_selected_list').html('');
+  var selected=[];
+  var list_output = '';
+      list_output += '<ul class="list-group">';
+      var i = 0;
+ $('#master_catalog_headers :selected').each(function(){
+    var selected_val = $(this).val();
+    var final_selected = selected_val.split('||||||');
+    list_output += '<li class="list-group-item">'+final_selected[1]+'</li>';
+     selected[i] = final_selected[0];
+    i++; });
+ list_output += '</ul>';
+ list_output += '<input type="hidden" id="selected_all_id" value="'+selected+'"><button type="button" class="btn btn-primary" onclick="setHeaderForMapping()">SET</button>';
+ $('#show_selected_list').html(list_output);
+  //console.log(selected);
+}
+
+function setHeaderForMapping(){
+  var val_array = $('#selected_all_id').val();
+  //console.log(val_array);
+  checkxCSRFToken();
+          $.ajax({
+            url: "setHeaderForMapping",
+            type: 'post',
+            data:{val_array:val_array},
+            success: function(result){
+              alert('Header Updated Successfully');
+              console.log(result);
+               return false;
+              // $('#fieldname_value').html('');
+              // $('#fieldname_value').html(result);
+              return false;
+
+            }
+
+        });
+}
+
+function hideShowMasterCatalogHeaders(val){
+  checkxCSRFToken();
+          $.ajax({
+            url: "hideShowMasterLSPHeaders",
+            type: 'post',
+            data:{id:val},
+            success: function(result){
+              $("#modal_center").modal("show");
+              $("#modal_center .modal-body").html(result);
+              return false;
+
+            }
+
+        });
+
+}
+
+function prerequisitePopUpShow(){
+  $(".modal-title").html('');
+  $(".modal-body").html('');
+  $(".modal-title").html('Prequisite');
+  $("#modal_center").modal("show");
+}
+// function for grad plan mapping end
 
 

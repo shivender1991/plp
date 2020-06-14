@@ -132,10 +132,17 @@ background: #fff;
 }
 
 .scrolllist{
-    overflow: scroll;
-    height: 200px;
+  overflow: scroll;
+  height: 185px;
+
+   /* min-height: 94px;
+    max-height: 185px;*/
 }
 
 .custom-switch{margin: 23px 112px 0px 0px;}
-.lsp-table-list-scroll{overflow: scroll;height: 347px;}
-.federal-state-scrolllist{overflow: scroll; height: 347px;}
+.table-responsives{overflow: scroll;height: 256px;}
+/*.federal-state-scrolllist{overflow: scroll; height: 347px;}*/
+.modal-body{overflow: scroll;height: 400px;}
+
+.form-fields{position: absolute; right: 9px;}
+.right-icon-setting{position: absolute; right: 19px;}
