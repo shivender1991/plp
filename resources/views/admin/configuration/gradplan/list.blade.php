@@ -16,6 +16,7 @@
                 $count_grad_plan = count($configMainGradPlanDatas);
                 $sr = 1;
               foreach($configMainGradPlanDatas as $configMainGradPlanData){
+
              ?>
         
           
@@ -39,7 +40,7 @@
     <div class="card">
       <div class="card-header">
         <h4 id="right_side_bar_title">Itme List</h4>
-        <div class="card-header-action">
+        <div class="card-header-action" id="add_new_button">
         <a href="javascript:void(0);" onclick="showSubGradPlanModal();" class="btn btn-primary">Add New</a>
         </div>
         <input type="hidden" value="" id="input_field_hidden_main_id">

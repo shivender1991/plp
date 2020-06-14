@@ -1,0 +1,46 @@
+plp_config_main_grad_plans table new created for grad plan
+
+plp_config_sub_grad_plans table new created for grad plan
+
+update plp_master_lsp_headers set gradplan_mapping_status='1'
+
+ALTER TABLE `plp_master_lsp_headers` ADD `prerequisite_mapping_status` INT NOT NULL DEFAULT '0' AFTER `gradplan_mapping_status`;
+
+ALTER TABLE `plp_master_sced_headers` ADD `gradplan_mapping_status` INT NOT NULL DEFAULT '1' AFTER `after_add_lsp_list_screen_status`; 
+
+ALTER TABLE `plp_master_sced_headers` ADD `prerequisite_mapping_status` INT NULL DEFAULT '1' AFTER `after_add_lsp_list_screen_status`; 
+
+ALTER TABLE `plp_master_elements` ADD `prerequisite_mapping_status` INT NOT NULL DEFAULT '1' AFTER `after_add_lsp_list_screen_status`, ADD `gradplan_mapping_status` INT NOT NULL DEFAULT '1' AFTER `prerequisite_mapping_status`; 
+
+ALTER TABLE `plp_master_attributes` ADD `prerequisite_mapping_status` INT NOT NULL DEFAULT '1' AFTER `after_add_lsp_list_screen_status`, ADD `gradplan_mapping_status` INT NOT NULL DEFAULT '1' AFTER `prerequisite_mapping_status`; 
+
+ALTER TABLE `plp_master_state_headers` ADD `prerequisite_mapping_status` INT NOT NULL DEFAULT '1' AFTER `after_add_lsp_list_screen_status`; 
+
+update plp_master_state_headers set prerequisite_mapping_status=0 
+
+update plp_master_elements set prerequisite_mapping_status=0 
+
+update plp_master_attributes set prerequisite_mapping_status=0 
+
+update plp_master_sced_headers set prerequisite_mapping_status=0 
+
+ALTER TABLE `plp_master_elements` ADD `created_by` TIMESTAMP NULL DEFAULT NULL AFTER `created_at`, ADD `updated_by` TIMESTAMP NULL DEFAULT NULL AFTER `created_by`; 
+
+ALTER TABLE `plp_master_attributes` ADD `created_by` TIMESTAMP NULL DEFAULT NULL AFTER `status`, ADD `updated_by` TIMESTAMP NULL DEFAULT NULL AFTER `created_by`; 
+ALTER TABLE `plp_master_elements` CHANGE `updated_by` `updated_by` INT NULL DEFAULT NULL; 
+ALTER TABLE `plp_master_elements` CHANGE `updated_at` `updated_at` INT NULL DEFAULT NULL; 
+
+ALTER TABLE `plp_master_attributes` CHANGE `created_at` `created_at` INT NULL DEFAULT NULL, CHANGE `updated_at` `updated_at` INT NULL DEFAULT NULL; 
+
+ALTER TABLE `plp_master_attributes` ADD `created_at` TIMESTAMP NULL DEFAULT NULL AFTER `updated_by`, ADD `updated_at` TIMESTAMP NULL DEFAULT NULL AFTER `created_at`; 
+
+
+
+
+
+
+
+
+
+
+

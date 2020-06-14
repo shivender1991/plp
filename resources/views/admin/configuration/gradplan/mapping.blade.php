@@ -1,167 +1,167 @@
 @extends('admin/layouts/app')
 @section('main-content')
 <div class="row">
-  <div class="col-6">
+  <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h4>Grad Plan Mapping</h4>
-        <div class="card-header-action">
-        <!-- <a href="javascript:void(0);" onclick="showAddNewPopUpForGradPlanConfig();" class="btn btn-primary">Add New</a> -->
-        </div>
+        <h4>Grad Plan Mapping </h4>
+         <button type="button" class="btn btn-primary form-fields" onclick="hideShowMasterLSPHeaders('lsp')"><i class="fas fa-cog"></i></button> 
       </div>
+      
       <div class="card-body">
-        <form class="" method="post">
-                
-                <div class="form-group">
-                  <label id="sub_input_type_status">Grad Plan</label>
-                  <div class="input-group">
-                    <select id="sub_grad_plan_status" class="form-control">
-                      <option value=" ">--Please Select--</option>
-                      <option value=" ">Prerequisite</option>
-                      <option value=" ">Diploma</option>
-                      <option value=" ">Post Graduate</option>
-                      <option value=" ">Core/Optional</option>
-                      <option value=" ">Mandatory/Optional</option>
-                    </select>
-                  </div>
-                </div>
+      <div class="row">
 
-                <div class="form-group">
-                  <label id="sub_input_type_status">sub item</label>
-                  <div class="input-group">
-                    <select id="sub_grad_plan_status" class="form-control">
-                      <option value=" ">--Please Select--</option>
-                      <option value=" ">Standar</option>
-                      <option value=" ">Az</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label id="sub_input_type_status">Course</label>
-                  <div class="input-group">
-                    <select id="sub_grad_plan_status" class="form-control">
-                      <option value=" ">--Please Select Course--</option>
-                    </select>
-                  </div>
-                </div>
-
-                <input type="hidden" value="" id="input_field_hidden_sub_id">
-                <button type="button" id="add_sub_grad_plan_button" onclick="" class="btn btn-primary m-t-15 waves-effect">Add</button>
-              </form>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-6" id="show_right_side_div" style="display: none;">
-    <div class="card">
-      <div class="card-header">
-        <h4 id="right_side_bar_title">Itme List</h4>
-        <div class="card-header-action">
-        <!-- <a href="javascript:void(0);" onclick="showSubGradPlanModal();" class="btn btn-primary">Add New</a> -->
-        </div>
-        <input type="hidden" value="" id="input_field_hidden_main_id">
-      </div>
-      <div class="table-responsive" id="sub_grad_data_show">
-        
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!--modal show main grad plan start-->
-    <div class="modal" id="grad_plan_config_modal" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="pop_up_title">Add Main Grad Plan</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form class="" method="post">
-                
-                <div class="form-group">
-                  <label id="input_type_name">Name *</label>
-                  <div class="input-group">
-                    <input type="text" id="main_grad_plan_name" class="form-control">
-                  </div>
-                </div>
-               
-                <div class="form-group">
-                  <label id="input_type_desc">Description</label>
-                  <div class="input-group">
-                    <textarea id="main_grad_plan_description" class="form-control"></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label id="input_type_status">Status</label>
-                  <div class="input-group">
-                    <select id="main_grad_plan_status" class="form-control">
-                      <option value="1">Enable</option>
-                      <option value="0">Disable</option>
-                    </select>
-                  </div>
-                </div>
-                <input type="hidden" id="input_field_hidden_edit_id" value="">
-                <button type="button" id="add_main_grad_plan_button" onclick="addMainGradePlan()" class="btn btn-primary m-t-15 waves-effect">Add</button>
-              </form>
-            </div>
+        <!--masterSced Headers-->
+        <?php
+            if( count($masterScedHeaders) > 0 ){
+              foreach($masterScedHeaders as $masterScedHeader){
+                $column_name = $masterScedHeader['name'];
+                $masterScedRow = App\Admin\Model\MasterSced::select('id', ''.$column_name.'')->where('SCED_course_code',$sced_course_code)->first();
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords(str_replace('_',' ',$column_name)); ?></label>
+                  <select class="form-control">
+                    <!-- <option value=" ">--Please Choose--</option> -->
+                    <?php
+                    if($masterScedRow){
+                    ?>
+                    <option value="<?php echo $masterScedRow->id; ?>"><?php echo $masterScedRow->$column_name; ?></option>
+                  <?php } ?>
+                  </select>
+              </div>
           </div>
-        </div>
-      </div>
-<!--modal show end-->
+        <?php }} ?>
 
-
-
-
-<!--modal show sub grad plan start-->
-    <div class="modal" id="sub_grad_plan_config_modal" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="sub_pop_up_title">Add Sub Grad Plan</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form class="" method="post">
-                
-                <div class="form-group">
-                  <label id="sub_input_type_name">Name *</label>
-                  <div class="input-group">
-                    <input type="text" id="sub_grad_plan_name" class="form-control">
-                  </div>
-                </div>
-               
-                <div class="form-group">
-                  <label id="sub_input_type_desc">Description</label>
-                  <div class="input-group">
-                    <textarea id="sub_grad_plan_description" class="form-control"></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label id="sub_input_type_status">Status</label>
-                  <div class="input-group">
-                    <select id="sub_grad_plan_status" class="form-control">
-                      <option value="1">Enable</option>
-                      <option value="0">Disable</option>
-                    </select>
-                  </div>
-                </div>
-
-                <input type="hidden" value="" id="input_field_hidden_sub_id">
-                <button type="button" id="add_sub_grad_plan_button" onclick="addSubGradePlan()" class="btn btn-primary m-t-15 waves-effect">Add</button>
-              </form>
-            </div>
+        <!--masterElements Headers-->
+        <?php
+            if( count($masterScedElementHeaders) > 0 ){
+              foreach($masterScedElementHeaders as $masterScedElementHeader){
+                $column_name = $masterScedElementHeader['input_type_name'];
+                $masterScedElementRow = App\Admin\Model\MasterSced::select('id', ''.$column_name.'')->where('SCED_course_code',$sced_course_code)->first();
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords(str_replace('_',' ',$column_name)); ?></label>
+                  <select class="form-control">
+                    <!-- <option value=" ">--Please Choose--</option> -->
+                    <?php
+                    if($masterScedElementRow){
+                    ?>
+                    <option value="<?php echo $masterScedElementRow->id; ?>"><?php echo $masterScedElementRow->$column_name; ?></option>
+                  <?php } ?>
+                  </select>
+              </div>
           </div>
+        <?php }} ?>
+
+
+        <!--masterAttribute Headers-->
+        <?php
+            if( count($masterScedAttributeHeaders) > 0 ){
+              foreach($masterScedAttributeHeaders as $masterScedAttributeHeader){
+                $column_name = $masterScedAttributeHeader['input_type_name'];
+                $masterScedAttributeRow = App\Admin\Model\MasterSced::select('id', ''.$column_name.'')->where('SCED_course_code',$sced_course_code)->first();
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords(str_replace('_',' ',$column_name)); ?></label>
+                  <select class="form-control">
+                    <!-- <option value=" ">--Please Choose--</option> -->
+                    <?php
+                    if($masterScedAttributeRow){
+                    ?>
+                    <option value="<?php echo $masterScedAttributeRow->id; ?>"><?php echo $masterScedAttributeRow->$column_name; ?></option>
+                  <?php } ?>
+                  </select>
+              </div>
+          </div>
+        <?php }} ?>
+
+
+        <!--masterAttribute Headers-->
+        <?php
+            if( count($masterStateHeaders) > 0 ){
+              foreach($masterStateHeaders as $masterStateHeader){
+                $column_name = $masterStateHeader['name'];
+                $masterSceStateRow = App\Admin\Model\MasterStateSced::select('id', ''.$column_name.'')->where('sced_code',$sced_course_code)->first();
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords(str_replace('_',' ',$column_name)); ?></label>
+                  <select class="form-control">
+                    <!-- <option value=" ">--Please Choose--</option> -->
+                    <?php
+                    if($masterSceStateRow){
+                    ?>
+                    <option value="<?php echo $masterSceStateRow->id; ?>"><?php echo $masterSceStateRow->$column_name; ?></option>
+                  <?php } ?>
+                  </select>
+              </div>
+          </div>
+        <?php }} ?>
+
+
+        <!--masterLsp Headers-->
+          <?php
+            if($masterLspHeaders){
+              foreach($masterLspHeaders as $masterLspHeader){
+                $column_name = $masterLspHeader['name'];
+                $lspRow = DB::table('mdl_course')->select('id', ''.$column_name.'')->where('id', $course_id)->first();
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords(str_replace('_',' ',$column_name)); ?></label>
+                  <select class="form-control">
+                    <!-- <option value=" ">--Please Choose--</option> -->
+                    <?php
+                    if($lspRow){
+                      //foreach($lspRows as $lspRow){
+                    ?>
+                    <option value="<?php echo $lspRow->id; ?>"><?php echo $lspRow->$column_name; ?></option>
+                  <?php }//} ?>
+                  </select>
+              </div>
+          </div>
+        <?php }} ?>
+          
+
+          <?php
+            if($configMainGradPlanDatas){
+              foreach($configMainGradPlanDatas as $configMainGradPlanData){
+                $main_grad_id = $configMainGradPlanData->id;
+                $SubGardRowsValues = DB::table('config_sub_grad_plans')->select('*')->where('main_grad_plan_id', $main_grad_id)->where('status', 1)->get();
+
+          ?>
+          <div class="col-12 col-md-6 col-lg-6">
+             <div class="form-group">
+                  <label><?php echo ucwords($configMainGradPlanData->name); ?></label>
+                  <?php
+                    if(count($SubGardRowsValues) > 0){
+                  ?>
+                  <select class="form-control">
+                  <option value=" ">--Please Choose--</option>
+                  <?php foreach($SubGardRowsValues as $SubGardRowsValue){ ?>
+                    <option value="<?php echo $SubGardRowsValue->id; ?>"><?php echo $SubGardRowsValue->name; ?></option>
+                  <?php } ?>
+                  </select>
+                  <?php }else{ ?>
+                  <input type="text" onclick="prerequisiteShowSelectedHeaders('lsp');" class="form-control" value="" name="">
+                <?php } ?>
+              </div>
+          </div>
+        <?php }} ?>
+
+          
+
         </div>
       </div>
-<!--modal show end-->		
+      <div class="card-footer">
+          <button class="btn btn-primary">Save</button>
+      <a class="btn btn-primary" href="{{ URL::previous() }}">Go Back</a>
+      </div>
+  </div>
+  </form>
+</div> 	
 
 @endsection

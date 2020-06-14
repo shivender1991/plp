@@ -24,7 +24,7 @@
               add content here..
             </div>
             <div class="modal-footer bg-whitesmoke br">
-              <button type="button" class="btn btn-primary">Save</button>
+              <!--<button type="button" class="btn btn-primary">Save</button>-->
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </div>
@@ -46,8 +46,11 @@ setTimeout(function(){
   <!-- General JS Scripts -->
   <script src="{{ url('assets/js/app.min.js') }}"></script>
   <!-- JS Libraies -->
-   <script src="{{ url('assets/bundles/datatables/datatables.min.js') }}"></script>
-  <script src="{{ url('assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ url('assets/bundles/datatables/datatables.min.js') }}"></script>
+ 
+
+ 
+
   <!--<script src="{{ url('assets/bundles/apexcharts/apexcharts.min.js') }}"></script>-->
    <script src="{{ url('assets/bundles/jquery-ui/jquery-ui.min.js') }}"></script>
   <!-- Page Specific JS File -->

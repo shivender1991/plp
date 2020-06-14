@@ -8,18 +8,17 @@
                     <h4>Topic</h4>
                   </div>
                   <div class="card-body">
+                    <div class="form-group">
+                      <label>Select Module</label>
+                      <select  name="fieldname[]"  id="fieldnames" class="form-control">
+                          <option value=''>Select Module</option>
+                        @foreach($course_topics as $course_topic )
+                        {{ print_r($course_topic) }}
+                       <option value='{{ $course_topic->SCED_course_code }}'>{{ $course_topic->SCED_course_title }}</option>
+                       @endforeach
+                      </select>
+                    </div>
                     <div class="row">
-                      <div class="col-12 col-sm-12 col-md-4">
-                        <ul class="nav nav-pills flex-column" id="myTab4" role="tablist">
-                          @if($course_topics)
-                          @foreach($course_topics as $course_topic)
-                          <li class="nav-item">
-                            <a class="nav-link" id="home-tab4" data-toggle="tab" href="#home4" role="tab" aria-controls="home" aria-selected="true">{{ $course_topic->SCED_course_title }} {{ $course_topic->SCED_course_code }}</a>
-                          </li>
-                          @endforeach
-                          @endif
-                        </ul>
-                      </div>
                       <div class="col-12 col-sm-12 col-md-8">
                         <div class="tab-content no-padding" id="myTab2Content">
                           <div class="tab-pane fade active show" id="home4" role="tabpanel" aria-labelledby="home-tab4">

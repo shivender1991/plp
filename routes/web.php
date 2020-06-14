@@ -22,7 +22,6 @@ Auth::routes();
 Route::group(['namespace'=>'Admin'], function(){
 	/* Dashboard */
 	Route::get('admin/dashboard', 'DashboardController@index')->name('admin.dashboard');
-	
 
 	// start federal for state all route
 	Route::get('federal/show', 'FederalController@show')->name('federal.show');
@@ -38,6 +37,10 @@ Route::group(['namespace'=>'Admin'], function(){
 	Route::post('federal/uploadStoreform', 'FederalController@uploadStoreform')->name('federal.uploadStoreform');
 	Route::get('federal/mapping/{id}', 'FederalController@mapping')->name('federal.mapping');
 	Route::post('federal/storemapping/{id}', 'FederalController@storemapping')->name('federal.storemapping');
+	Route::post('federal/activeDeactiveFederalColumn', 'FederalController@activeDeactiveFederalColumn')->name('federal.activeDeactiveFederalColumn');
+	Route::post('federal/federalactiveDeactiveUpdateColumn', 'FederalController@federalactiveDeactiveUpdateColumn')->name('federal.federalactiveDeactiveUpdateColumn');
+	Route::post('federal/federalWithElementAttributeMapping', 'FederalController@federalWithElementAttributeMapping')->name('federal.federalWithElementAttributeMapping');
+	Route::post('federal/federalElemntAttributeactivedeactive', 'FederalController@federalElemntAttributeactivedeactive')->name('federal.federalElemntAttributeactivedeactive');
 	// end federal for state all route
 
 	// state for state all route
@@ -69,9 +72,10 @@ Route::group(['namespace'=>'Admin'], function(){
 	Route::post('lsp/getAllData', 'LspController@getAllData')->name('lsp.getAllData');
 	Route::post('lsp/getDataFromSelectedStateFeTable', 'LspController@getDataFromSelectedStateFeTable')->name('lsp.getDataFromSelectedStateFeTable');
 	Route::post('lsp/fetchTableAfterMappedLspWithFederalState', 'LspController@fetchTableAfterMappedLspWithFederalState')->name('lsp.fetchTableAfterMappedLspWithFederalState');
+	Route::post('lsp/activeDeactiveUpdateColumn', 'LspController@activeDeactiveUpdateColumn')->name('lsp.activeDeactiveUpdateColumn');
+	Route::post('lsp/settingForAfterAddMappingLspwithFederalState', 'LspController@settingForAfterAddMappingLspwithFederalState')->name('lsp.settingForAfterAddMappingLspwithFederalState');
+	Route::post('lsp/settingForAfterAddMappingColumnUpdate', 'LspController@settingForAfterAddMappingColumnUpdate')->name('lsp.settingForAfterAddMappingColumnUpdate');
 	// start LSP for state all route
-
-
 
 	// start for mappled all routes 
 	Route::get('mapped/view', 'MappedController@view')->name('mapped.list');
@@ -87,7 +91,14 @@ Route::group(['namespace'=>'Admin'], function(){
 	Route::post('configuration/gradplan/getGradPlanItemList', 'GradplanController@getGradPlanItemList')->name('gradplan.getGradPlanItemList');
 	Route::post('configuration/gradplan/editSubGradPlan', 'GradplanController@editSubGradPlan')->name('gradplan.editSubGradPlan');
 	Route::post('configuration/gradplan/editMainGradPlan', 'GradplanController@editMainGradPlan')->name('gradplan.editMainGradPlan');
-	Route::get('configuration/gradplan/mapping', 'GradplanController@mapping')->name('gradplan.mapping');
+	Route::get('configuration/gradplan/mapping/{id}', 'GradplanController@mapping')->name('gradplan.mapping');
+	Route::post('configuration/gradplan/hideShowMasterLSPHeaders', 'GradplanController@hideShowMasterLSPHeaders')->name('gradplan.hideShowMasterLSPHeaders');
+	Route::post('configuration/gradplan/updateMasterHeaders', 'GradplanController@updateMasterHeaders')->name('gradplan.updateMasterHeaders');
+	Route::post('configuration/gradplan/getMasterLSPSelectedHeaderValue', 'GradplanController@getMasterLSPSelectedHeaderValue')->name('gradplan.getMasterLSPSelectedHeaderValue');
+	Route::post('configuration/gradplan/setHeaderForMapping', 'GradplanController@setHeaderForMapping')->name('gradplan.setHeaderForMapping');
+	Route::post('configuration/gradplan/prerequisiteShowSelectedHeaders', 'GradplanController@prerequisiteShowSelectedHeaders')->name('gradplan.prerequisiteShowSelectedHeaders');
+	Route::post('configuration/gradplan/prequestFilter', 'GradplanController@prequestFilter')->name('gradplan.prequestFilter');
+	// Route::post('configuration/gradplan/hideShowMasterCatalogHeaders', 'GradplanController@hideShowMasterCatalogHeaders')->name('gradplan.hideShowMasterCatalogHeaders');
 	// end for Configuration all routes 
 	
 

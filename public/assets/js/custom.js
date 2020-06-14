@@ -875,6 +875,7 @@ function getGradPlanItemList(name, id, sr, total_sr){
 
              $('#sub_grad_data_show').html('');
              $('#sub_grad_data_show').html(result);
+             showSelectedList();
              $('#show_right_side_div').show();
              //window.location.reload();
                   return true;
@@ -962,10 +963,11 @@ function editSubGradPlan(id){
 
 // function for grad plan mapping start
 function hideShowMasterLSPHeaders(val){
-  $("#modal_center").modal("show");
+  $(".modal-title").html('Grad Plan Mapping Headers');
+  //$("#modal_center").modal("show");
   checkxCSRFToken();
           $.ajax({
-            url: "hideShowMasterLSPHeaders",
+            url: "../hideShowMasterLSPHeaders",
             type: 'post',
             data:{id:val},
             success: function(result){
@@ -979,12 +981,13 @@ function hideShowMasterLSPHeaders(val){
 
 }
 
-function updateMasterLSPHeader(val){
+function updateMasterHeaders(id, sr){
+  var header_table = $('#header_table'+sr).val();
   checkxCSRFToken();
           $.ajax({
-            url: "updateMasterLSPHeader",
+            url: "../updateMasterHeaders",
             type: 'post',
-            data:{id:val},
+            data:{id:id, header_table:header_table},
             success: function(result){
               //alert(result); return false;
               $("#modal_center").modal("hide");
@@ -1020,6 +1023,7 @@ function getMasterLSPSelectedHeaderValue(val){
 //   });
 
 function showSelectedList(){
+  console.log('list');
   $('#show_selected_list').html('');
   var selected=[];
   var list_output = '';
@@ -1075,11 +1079,39 @@ function hideShowMasterCatalogHeaders(val){
 
 }
 
-function prerequisitePopUpShow(){
+function prerequisiteShowSelectedHeaders(val){
   $(".modal-title").html('');
   $(".modal-body").html('');
   $(".modal-title").html('Prequisite');
-  $("#modal_center").modal("show");
+  checkxCSRFToken();
+          $.ajax({
+            url: "../prerequisiteShowSelectedHeaders",
+            type: 'post',
+            data:{id:val},
+            success: function(result){
+              $("#modal_center").modal("show");
+              $("#modal_center .modal-body").html(result);
+              return false;
+
+            }
+
+        });
+}
+
+function prequestFilter(value_and_column){
+  checkxCSRFToken();
+          $.ajax({
+            url: "../prequestFilter",
+            type: 'post',
+            data:{value_and_column:value_and_column},
+            success: function(result){
+              $("#shortname").html('');
+              $("#shortname").html(result);
+              return false;
+
+            }
+
+        });
 }
 // function for grad plan mapping end
 

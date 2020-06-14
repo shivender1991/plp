@@ -15,7 +15,7 @@
                       <select class="form-control" onchange="displayFields(this.value);" name="format">
                         <option value="">--Choose Option--</option>
                          <option value="manual">Manual</option>
-                        <option value="import">Import CSV file</option>
+                        <option value="import">Import Excel file</option>
                         <option value="api">API</option>
                       </select> 
                     </div>

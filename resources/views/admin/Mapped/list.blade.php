@@ -21,6 +21,7 @@
 					<th>Course Description</th>
 					<th>SCED Course Code</th>
 					<th>Action</th>
+					<!-- <th>Action</th> -->
 				  </tr>
 				</thead>
 				<tbody>
@@ -33,8 +34,9 @@
 					<td><a href="{{ route('mapped.course', ['id' =>$lspMappedData->id]) }}">{{ $lspMappedData->course_id }}</a></td>
 					<td>{{ $lspMappedData->SCED_course_title }}</td>
 					<td data-toggle="tooltip" data-placement="top" data-original-title="{{  Illuminate\Support\Str::limit($lspMappedData->SCED_course_description) }}">{{  Illuminate\Support\Str::limit($lspMappedData->SCED_course_description, 50) }}</td>
-					<td>{{ $lspMappedData->sced_course_id }}</td>
-					<td><a href="{{ route('mapped.show', ['id' =>$lspMappedData->id]) }}">View</a></td>
+					<td>{{ $lspMappedData->sced_course_code }}</td>
+					<td><a href="{{ route('gradplan.mapping', ['id' =>$lspMappedData->id]) }}" class="btn btn-primary">grad Plan Map</a></td>
+					<!-- <td><a href="{{ route('mapped.show', ['id' =>$lspMappedData->id]) }}">View</a></td> -->
 				  </tr>
 			   @endforeach
 				   @else

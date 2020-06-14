@@ -12,7 +12,7 @@
                       <label>Select Below</label>
                       <select  name="fieldname[]"  id="fieldnames" class="form-control" multiple="" data-height="100%" style="height: 100%;">
                       	@foreach($fieldNames as $fieldName )
-							         <option value='{{ $fieldName }}'>{{ ucwords(str_replace('_',' ',$fieldName)) }}</option>
+							         <option value="{{ $fieldName['name'] }}">{{ ucwords(str_replace('_',' ',$fieldName['name'])) }}</option>
                     	 @endforeach
 						          </select>
                     </div>
@@ -78,10 +78,16 @@
                   </div>
                 </div>
               </div>
-             </div>
-              <div class="col-12 col-md-12 col-lg-12"><center><button type="button" id="add_lsp_button" class="btn btn-primary m-t-15 waves-effect" stryle="display:none;">Add</button><center></div>
-            <div class="row">
               <div class="col-12 col-md-12 col-lg-12">
+                <div class="row">
+                <div class="col-12 col-md-10 col-lg-10"><center><button type="button" id="add_lsp_button" style="display:none;" class="btn btn-primary m-t-15 waves-effect" stryle="display:none;">Add</button><center></div>
+                <div class="col-12 col-md-2 col-lg-2"><center><button type="button" id="setting_for_table_field" class="btn btn-primary right-icon-setting" style="display:none;" onclick="settingForAfterAddMappingLspwithFederalState()"><i class="fas fa-cog"></i></button></center></div>
+                </div>
+                </div>
+             </div>
+              
+            <div class="row">
+              <div class="col-12 col-md-12 col-lg-12" id="after_mapped_data_show">
                 
               </div>
               
