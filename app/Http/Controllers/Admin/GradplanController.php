@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use App\Admin\Model\MasterElement;
 use App\Admin\Model\MasterAttribute;
 use App\Admin\Model\MasterLspMapping;
+use App\Admin\Model\GradplanMapping;
 use DB;
 
 class GradplanController extends Controller
@@ -285,7 +286,7 @@ class GradplanController extends Controller
         $masterScedAttributeHeaders = MasterAttribute::select('*')->where('gradplan_mapping_status', 1)->get();
         $masterStateHeaders = MasterStateHeader::select('*')->where('gradplan_mapping_status', 1)->get();
         $configMainGradPlanDatas = DB::table('config_main_grad_plans')->select('*')->where('status', 1)->where('mapping_field', 1)->get();
-        return view('admin.configuration.gradplan.mapping',['masterLspHeaders'=>$masterLspHeaders, 'configMainGradPlanDatas'=>$configMainGradPlanDatas,'masterScedHeaders'=>$masterScedHeaders,'masterScedElementHeaders'=>$masterScedElementHeaders,'masterScedAttributeHeaders'=>$masterScedAttributeHeaders,'masterStateHeaders'=>$masterStateHeaders,'course_id'=>$course_id,'sced_course_code'=>$sced_course_code]);
+        return view('admin.configuration.gradplan.mapping',['masterLspHeaders'=>$masterLspHeaders, 'configMainGradPlanDatas'=>$configMainGradPlanDatas,'masterScedHeaders'=>$masterScedHeaders,'masterScedElementHeaders'=>$masterScedElementHeaders,'masterScedAttributeHeaders'=>$masterScedAttributeHeaders,'masterStateHeaders'=>$masterStateHeaders,'course_id'=>$course_id,'sced_course_code'=>$sced_course_code,'master_catalog_id'=>$id]);
     }
 
 
@@ -461,7 +462,7 @@ class GradplanController extends Controller
         $output_selected .= '<div class="col-12">';
         $output_selected .= '<div class="form-group">';
         $output_selected .= '<label>Shortname</label>';
-        $output_selected .= '<select class="form-control" id="shortname">';
+        $output_selected .= '<select class="form-control" id="shortname" onchange="setPrequisiteValueInInputBox(this.value);">';
         $output_selected .= '<option value=" ">--Please Choose--</option>';
         $output_selected .='</select>';
         $output_selected .='</div>';
@@ -478,6 +479,7 @@ class GradplanController extends Controller
       $lsp_Datas=DB::table('mdl_course')->select('shortname')->where(''.$value_and_column[1].'',''.$value_and_column[0].'')->get();
       $output = '';
       if($lsp_Datas){
+        $output .= '<option value=" ">--Please Choose--</option>';
         foreach($lsp_Datas as $lsp_Data){
           $output .= '<option value="'.$lsp_Data->shortname.'">'.$lsp_Data->shortname.'</option>';
         }
@@ -485,6 +487,38 @@ class GradplanController extends Controller
       echo $output;
       exit;
     } 
+
+    public function gradplanMappingSave(Request $request){
+      $master_catalog_id = $request->input('master_catalog_id');
+      $getLspMappingDatas = GradplanMapping::where('master_mapping_catalog_id', $master_catalog_id)->get();
+      if(count($getLspMappingDatas) > 0){
+          return response()->json([
+              'msg'=>'This data already mapped.'
+              ]);
+      }else{
+        $input_str = explode('||', rtrim($request->input('input_str'), '||'));
+        $arr_input = array();
+        $arr_input['master_mapping_catalog_id'] = $master_catalog_id;
+        foreach($input_str as $single_val){
+          $single_val = explode('@@', $single_val);
+          //echo .'  '. ;
+          $arr_input[$single_val[0]]=$single_val[1];
+          //$insertdata->$single_val[0] = $single_val[1];
+          
+        }
+        //print_r($arr_input);
+        $arr_input['created_by'] = Auth::user()->id;
+        $arr_input['updated_by'] = Auth::user()->id;
+        GradplanMapping::insert($arr_input);
+        return response()->json([
+              'msg'=>'This data Mapped Successfully.'
+              ]);
+        exit;
+      }
+      
+      // echo '1';
+      
+    }
     // grad plan mapping methods end
 
 

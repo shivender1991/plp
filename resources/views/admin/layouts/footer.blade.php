@@ -23,6 +23,7 @@
             <div class="modal-body">
               add content here..
             </div>
+            <input type="hidden" value="" id="gradplan_header_sr">
             <div class="modal-footer bg-whitesmoke br">
               <!--<button type="button" class="btn btn-primary">Save</button>-->
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

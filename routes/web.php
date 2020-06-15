@@ -98,6 +98,7 @@ Route::group(['namespace'=>'Admin'], function(){
 	Route::post('configuration/gradplan/setHeaderForMapping', 'GradplanController@setHeaderForMapping')->name('gradplan.setHeaderForMapping');
 	Route::post('configuration/gradplan/prerequisiteShowSelectedHeaders', 'GradplanController@prerequisiteShowSelectedHeaders')->name('gradplan.prerequisiteShowSelectedHeaders');
 	Route::post('configuration/gradplan/prequestFilter', 'GradplanController@prequestFilter')->name('gradplan.prequestFilter');
+	Route::post('configuration/gradplan/gradplanMappingSave', 'GradplanController@gradplanMappingSave')->name('gradplan.gradplanMappingSave');
 	// Route::post('configuration/gradplan/hideShowMasterCatalogHeaders', 'GradplanController@hideShowMasterCatalogHeaders')->name('gradplan.hideShowMasterCatalogHeaders');
 	// end for Configuration all routes 
 	

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2020 at 05:33 PM
+-- Generation Time: Jun 15, 2020 at 12:36 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -31,6 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `plp_config_main_grad_plans` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` tinyint(4) NOT NULL DEFAULT 1,
   `mapping_field` int(11) NOT NULL DEFAULT 1,
@@ -44,17 +45,17 @@ CREATE TABLE `plp_config_main_grad_plans` (
 -- Dumping data for table `plp_config_main_grad_plans`
 --
 
-INSERT INTO `plp_config_main_grad_plans` (`id`, `name`, `description`, `status`, `mapping_field`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 'Diploma Options', '', 1, 1, 2, 2, NULL, NULL),
-(2, 'Post Graduation Plan', '', 1, 1, 2, 2, NULL, NULL),
-(3, 'School Name', '', 1, 0, 2, 2, NULL, NULL),
-(4, 'Prerequisite', '', 1, 1, 2, 2, NULL, NULL),
-(5, 'Testtt', '', 0, 0, 2, 2, '2020-06-10 11:27:30', '2020-06-11 07:46:00'),
-(6, 'Course Options', '', 1, 1, 2, 2, '2020-06-10 11:30:20', '2020-06-12 13:44:32'),
-(7, 'Mandatory/Optional', '', 1, 1, 2, 2, '2020-06-10 11:41:47', '2020-06-12 13:51:49'),
-(8, 'test', '', 0, 0, 2, 2, '2020-06-10 15:30:34', '2020-06-11 07:45:14'),
-(9, 'Testr', '', 0, 0, 2, 2, '2020-06-11 06:13:31', '2020-06-11 06:13:31'),
-(10, 'School Name1', '', 0, 0, 2, 2, '2020-06-11 07:37:29', '2020-06-11 07:45:44');
+INSERT INTO `plp_config_main_grad_plans` (`id`, `name`, `slug`, `description`, `status`, `mapping_field`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, 'Diploma Options', 'diploma_options', '', 1, 1, 2, 2, NULL, NULL),
+(2, 'Post Graduation Plan', 'post_graduation_plan', '', 1, 1, 2, 2, NULL, NULL),
+(3, 'School Name', '', '', 1, 0, 2, 2, NULL, NULL),
+(4, 'Prerequisite', 'prerequisite', '', 1, 1, 2, 2, NULL, NULL),
+(5, 'Testtt', '', '', 0, 0, 2, 2, '2020-06-10 11:27:30', '2020-06-11 07:46:00'),
+(6, 'Course Options', 'course_options', '', 1, 1, 2, 2, '2020-06-10 11:30:20', '2020-06-12 13:44:32'),
+(7, 'Mandatory Optional', 'mandatory_optional', '', 1, 1, 2, 2, '2020-06-10 11:41:47', '2020-06-12 13:51:49'),
+(8, 'test', '', '', 0, 0, 2, 2, '2020-06-10 15:30:34', '2020-06-11 07:45:14'),
+(9, 'Testr', '', '', 0, 0, 2, 2, '2020-06-11 06:13:31', '2020-06-11 06:13:31'),
+(10, 'School Name1', '', '', 0, 0, 2, 2, '2020-06-11 07:37:29', '2020-06-11 07:45:44');
 
 -- --------------------------------------------------------
 
@@ -113,6 +114,34 @@ CREATE TABLE `plp_failed_jobs` (
   `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plp_gradplan_mappings`
+--
+
+CREATE TABLE `plp_gradplan_mappings` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `master_mapping_catalog_id` int(11) NOT NULL,
+  `diploma_options` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `post_graduation_plan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `prerequisite` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `course_options` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mandatory_optional` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `plp_gradplan_mappings`
+--
+
+INSERT INTO `plp_gradplan_mappings` (`id`, `master_mapping_catalog_id`, `diploma_options`, `post_graduation_plan`, `prerequisite`, `course_options`, `mandatory_optional`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, 7, '1', '2', 'Physics', '14', '16', 2, 2, NULL, NULL),
+(2, 2, '3', '7', '1EN3BSB01C', '14', '17', 2, 2, '2020-06-15 09:41:37', '2020-06-15 09:41:37');
 
 -- --------------------------------------------------------
 
@@ -223,9 +252,9 @@ CREATE TABLE `plp_master_elements` (
 --
 
 INSERT INTO `plp_master_elements` (`id`, `name`, `input_type`, `input_type_label`, `input_type_name`, `input_type_id`, `header_order`, `federal_element_attribute_screen_status`, `after_add_lsp_list_screen_status`, `prerequisite_mapping_status`, `gradplan_mapping_status`, `status`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(1, 'Subject Name', 'drop-down', 'Subject Area', 'subject_area', NULL, NULL, 1, 1, 0, 0, 1, '2020-06-09 09:44:58', '2020-06-14 15:13:48', NULL, 2),
+(1, 'Subject Name', 'drop-down', 'Subject Area', 'subject_area', NULL, NULL, 1, 1, 0, 1, 1, '2020-06-09 09:44:58', '2020-06-15 04:23:11', NULL, 2),
 (2, 'Course Level', 'drop-down', 'Course Level', 'course_level', NULL, NULL, 1, 1, 0, 1, 1, '2020-06-09 09:44:58', NULL, NULL, NULL),
-(3, 'Carnegie Unit Credit', 'text', 'Carnegie Unit Credit', 'carnegie_unit_credit', NULL, NULL, 1, 1, 0, 0, 1, '2020-06-09 09:44:58', '2020-06-14 15:10:40', NULL, 2),
+(3, 'Carnegie Unit Credit', 'text', 'Carnegie Unit Credit', 'carnegie_unit_credit', NULL, NULL, 1, 1, 0, 1, 1, '2020-06-09 09:44:58', '2020-06-15 04:23:17', NULL, 2),
 (4, 'Grade Span', 'drop-down', 'Grade Span', 'grade_span', NULL, NULL, 1, 1, 0, 1, 1, '2020-06-09 09:44:58', NULL, NULL, NULL),
 (5, 'Sequence of Course', 'drop-down', 'Sequence of Course', 'sequence_of_course', NULL, NULL, 1, 1, 0, 1, 1, '2020-06-09 09:44:58', NULL, NULL, NULL);
 
@@ -281,12 +310,12 @@ CREATE TABLE `plp_master_lsp_headers` (
 --
 
 INSERT INTO `plp_master_lsp_headers` (`id`, `name`, `input_type_lebel`, `Input_type_name`, `Input_type_id`, `header_order`, `lsp_federal_state_screen_status`, `after_add_lsp_list_screen_status`, `gradplan_mapping_status`, `prerequisite_mapping_status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 'category', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-14 11:08:10'),
-(2, 'sortorder', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-14 11:08:10'),
-(3, 'fullname', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-14 11:08:11'),
+(1, 'category', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-15 09:46:39'),
+(2, 'sortorder', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-15 09:46:39'),
+(3, 'fullname', '', '', '', 0, 1, 1, 1, 1, 1, 2, NULL, '2020-06-15 09:46:39'),
 (5, 'shortname', '', '', '', 0, 1, 1, 1, 0, NULL, 2, NULL, '2020-06-14 07:11:17'),
 (6, 'idnumber', '', '', '', 0, 1, 1, 1, 0, NULL, 2, NULL, '2020-06-13 14:04:10'),
-(7, 'summary', '', '', '', 0, 1, 1, 1, 0, NULL, 2, NULL, NULL),
+(7, 'summary', '', '', '', 0, 1, 1, 1, 1, NULL, 2, NULL, '2020-06-15 09:46:39'),
 (8, 'summaryformat', '', '', '', 0, 1, 1, 1, 0, NULL, 2, NULL, NULL),
 (9, 'format', '', '', '', 0, 1, 1, 1, 0, NULL, 2, NULL, NULL),
 (10, 'showgrades', '', '', '', 0, 1, 0, 1, 0, 1, 2, NULL, '2020-06-09 11:54:06'),
@@ -2274,7 +2303,7 @@ CREATE TABLE `plp_master_sced_headers` (
 --
 
 INSERT INTO `plp_master_sced_headers` (`id`, `name`, `input_type`, `input_type_label`, `input_type_name`, `input_type_id`, `header_order`, `readonly`, `lsp_federal_screen_status`, `federal_list_status`, `federal_element_attribute_screen_status`, `after_add_lsp_list_screen_status`, `prerequisite_mapping_status`, `gradplan_mapping_status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 'SCED_course_code', NULL, NULL, 'SCED_course_code', NULL, 0, 'readonly', 1, 1, 1, 1, 0, 1, 1, 1, '2020-06-05 08:51:19', '2020-06-10 08:46:03'),
+(1, 'SCED_course_code', NULL, NULL, 'SCED_course_code', NULL, 0, 'readonly', 1, 1, 1, 1, 0, 0, 1, 2, '2020-06-05 08:51:19', '2020-06-15 09:51:04'),
 (2, 'SCED_course_title', NULL, NULL, 'SCED_course_title', NULL, 0, 'readonly', 1, 1, 1, 1, 0, 1, 1, 1, '2020-06-05 08:51:19', '2020-06-10 08:46:10'),
 (3, 'SCED_course_description', NULL, NULL, 'SCED_course_description', NULL, 0, 'readonly', 1, 1, 1, 1, 0, 1, 1, 1, '2020-06-05 08:51:19', '2020-06-08 08:51:20'),
 (4, 'change_status', NULL, NULL, 'change_status', NULL, 0, 'readonly', 1, 1, 1, 1, 0, 1, 1, 2, '2020-06-05 08:51:19', '2020-06-14 15:03:26');
@@ -5014,7 +5043,8 @@ INSERT INTO `plp_migrations` (`id`, `migration`, `batch`) VALUES
 (13, '2020_05_29_161528_create_master_state_headers', 1),
 (15, '2020_05_30_173511_create_master_course_catalogs', 2),
 (16, '2020_06_03_170143_create_master_lsp_datas_table', 3),
-(21, '2020_06_03_180458_create_master_lsp_mappings_table', 4);
+(21, '2020_06_03_180458_create_master_lsp_mappings_table', 4),
+(22, '2020_06_15_095559_create_gradplan_mappings_table', 5);
 
 -- --------------------------------------------------------
 
@@ -5151,6 +5181,12 @@ ALTER TABLE `plp_config_sub_grad_plans`
 -- Indexes for table `plp_failed_jobs`
 --
 ALTER TABLE `plp_failed_jobs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `plp_gradplan_mappings`
+--
+ALTER TABLE `plp_gradplan_mappings`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -5312,6 +5348,12 @@ ALTER TABLE `plp_failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `plp_gradplan_mappings`
+--
+ALTER TABLE `plp_gradplan_mappings`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `plp_master_attributes`
 --
 ALTER TABLE `plp_master_attributes`
@@ -5399,7 +5441,7 @@ ALTER TABLE `plp_mdl_course`
 -- AUTO_INCREMENT for table `plp_migrations`
 --
 ALTER TABLE `plp_migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `plp_oauth_clients`

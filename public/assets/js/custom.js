@@ -1079,7 +1079,8 @@ function hideShowMasterCatalogHeaders(val){
 
 }
 
-function prerequisiteShowSelectedHeaders(val){
+function prerequisiteShowSelectedHeaders(sr, val, slug){
+  $('#gradplan_header_sr').val('');
   $(".modal-title").html('');
   $(".modal-body").html('');
   $(".modal-title").html('Prequisite');
@@ -1089,8 +1090,9 @@ function prerequisiteShowSelectedHeaders(val){
             type: 'post',
             data:{id:val},
             success: function(result){
-              $("#modal_center").modal("show");
               $("#modal_center .modal-body").html(result);
+              $('#gradplan_header_sr').val(slug);
+              $("#modal_center").modal("show");
               return false;
 
             }
@@ -1113,6 +1115,42 @@ function prequestFilter(value_and_column){
 
         });
 }
+
+function setPrequisiteValueInInputBox(val){
+  console.log(val);
+  var slug = $('#gradplan_header_sr').val();
+  $('#'+slug).val(val);
+}
+
+
+function gradplanMappingSave(total_count, master_catalog_id, slug){
+  console.log(slug);
+  var slug_split = slug.split("||");
+  //alert(slug_split[0]);
+
+  var input_str = '';
+  $.each(slug_split, function(key, value) {
+    input_str += value+'@@'+$('#'+value).val()+'||';
+  });
+  checkxCSRFToken();
+          $.ajax({
+            url: "../gradplanMappingSave",
+            type: 'post',
+            data:{master_catalog_id:master_catalog_id, input_str:input_str},
+            beforeSend:function(){
+              //alert('beforeSend');
+              //return false;
+            },
+            success: function(result){
+              console.log(result.msg);
+              alert(result.msg);
+              return false;
+
+            }
+
+        });
+}
+
 // function for grad plan mapping end
 
 

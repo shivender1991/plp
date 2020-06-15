@@ -128,10 +128,12 @@
 
           <?php
             if($configMainGradPlanDatas){
+              $i = 1;
+              $slug_str = '';
               foreach($configMainGradPlanDatas as $configMainGradPlanData){
                 $main_grad_id = $configMainGradPlanData->id;
                 $SubGardRowsValues = DB::table('config_sub_grad_plans')->select('*')->where('main_grad_plan_id', $main_grad_id)->where('status', 1)->get();
-
+                $slug_str .= $configMainGradPlanData->slug.'||';
           ?>
           <div class="col-12 col-md-6 col-lg-6">
              <div class="form-group">
@@ -139,29 +141,28 @@
                   <?php
                     if(count($SubGardRowsValues) > 0){
                   ?>
-                  <select class="form-control">
+                  <select class="form-control" id="<?php echo $configMainGradPlanData->slug; ?>">
                   <option value=" ">--Please Choose--</option>
                   <?php foreach($SubGardRowsValues as $SubGardRowsValue){ ?>
                     <option value="<?php echo $SubGardRowsValue->id; ?>"><?php echo $SubGardRowsValue->name; ?></option>
                   <?php } ?>
                   </select>
                   <?php }else{ ?>
-                  <input type="text" onclick="prerequisiteShowSelectedHeaders('lsp');" class="form-control" value="" name="">
+                  <input type="text" id="<?php echo $configMainGradPlanData->slug ?>" onclick="prerequisiteShowSelectedHeaders(<?php echo $i; ?>,'lsp', '<?php echo $configMainGradPlanData->slug ?>');" class="form-control" value="" name="">
                 <?php } ?>
               </div>
           </div>
-        <?php }} ?>
+        <?php $i++; }} ?>
 
           
 
         </div>
       </div>
       <div class="card-footer">
-          <button class="btn btn-primary">Save</button>
+          <button class="btn btn-primary" id="gradplan_save" onclick="gradplanMappingSave(<?php echo $i-1; ?>, <?php echo $master_catalog_id; ?>, '<?php echo rtrim($slug_str, "||"); ?>');">Save</button>
       <a class="btn btn-primary" href="{{ URL::previous() }}">Go Back</a>
-      </div>
+
   </div>
-  </form>
 </div> 	
 
 @endsection
