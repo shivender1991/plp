@@ -1101,14 +1101,48 @@ function prerequisiteShowSelectedHeaders(sr, val, slug){
 }
 
 function prequestFilter(value_and_column){
+  var all_selected_headers = $('#selectedHeadersName').val();
+  //console.log(all_selected_headers);
+  var all_selected_headers_split = all_selected_headers.split("||");
+
+  var input_header_name_value = [];
+  $.each(all_selected_headers_split, function(key, value) {
+      //console.log($('#'+value).val());
+      if($('#'+value).val() != ''){
+        //input_header_name_value += $('#'+value).val()+'@@';
+        input_header_name_value.push($('#'+value).val());
+      }
+      
+    
+  });
+  //console.log(input_header_name_value);
+ //return false;
   checkxCSRFToken();
           $.ajax({
             url: "../prequestFilter",
             type: 'post',
-            data:{value_and_column:value_and_column},
+            data:{value_and_column:value_and_column, input_header_name_value:input_header_name_value,all_selected_headers:all_selected_headers},
             success: function(result){
-              $("#shortname").html('');
-              $("#shortname").html(result);
+             console.log(result);
+            //return false;
+              var jsonRes = JSON.parse(result);
+              //console.log(jsonRes.fullname);
+              //$.each(all_selected_headers_split, function(key, value) {
+                //$("#"+value).html('');
+                $.each(jsonRes, function(key_json, fieldname) {
+
+                      //console.log(key_json);
+                      //console.log(fieldname);
+                     $("#"+key_json).html('');
+                     $("#"+key_json).html(fieldname); 
+                });
+                
+              //});
+
+              //console.log(res);
+
+              // $("#shortname").html('');
+              // $("#shortname").html(result);
               return false;
 
             }

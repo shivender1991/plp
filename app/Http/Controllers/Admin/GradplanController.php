@@ -441,14 +441,16 @@ class GradplanController extends Controller
       $masterLspHeaders = MasterLspHeader::select('*')->where('prerequisite_mapping_status', 1)->get();
       if($masterLspHeaders){
         $output_selected = '';
+        $column_str = '';
         foreach($masterLspHeaders as $masterLspHeader){
           $column_name = $masterLspHeader['name'];
+          $column_str .= $masterLspHeader['name'].'||';
           $lspRows = DB::table('mdl_course')->select('id', ''.$column_name.'')->get();
           $output_selected .= '<div class="col-12">';
           $output_selected .= '<div class="form-group">';
-          $output_selected .= '<label>'.ucwords(str_replace('_',' ',$masterLspHeader['name'])).'</label>';
-          $output_selected .= '<select class="form-control" onchange="prequestFilter(this.value);">';
-          $output_selected .= '<option value=" ">--Please Choose--</option>';
+          $output_selected .= '<label>'.ucwords(str_replace('_',' ',$column_name)).'</label>';
+          $output_selected .= '<select class="form-control" onchange="prequestFilter(this.value);" id="'.$column_name.'">';
+          $output_selected .= '<option value="">--Please Choose--</option>';
           if($lspRows){
             foreach($lspRows as $lspRow){
               $output_selected .= '<option value="'.$lspRow->$column_name.'||||||'.$column_name.'">'.$lspRow->$column_name.'</option>';
@@ -458,12 +460,13 @@ class GradplanController extends Controller
           $output_selected .='</div>';
           $output_selected .='</div>';
         }
-
+        $column_str .= 'shortname';
+        $output_selected .= '<input type="hidden" id="selectedHeadersName" value="'.rtrim($column_str, '||').'">';
         $output_selected .= '<div class="col-12">';
         $output_selected .= '<div class="form-group">';
         $output_selected .= '<label>Shortname</label>';
         $output_selected .= '<select class="form-control" id="shortname" onchange="setPrequisiteValueInInputBox(this.value);">';
-        $output_selected .= '<option value=" ">--Please Choose--</option>';
+        $output_selected .= '<option value="">--Please Choose--</option>';
         $output_selected .='</select>';
         $output_selected .='</div>';
         $output_selected .='</div>';
@@ -475,16 +478,61 @@ class GradplanController extends Controller
 
 
     public function prequestFilter(Request $request){
-      $value_and_column = explode('||||||', $request->input('value_and_column'));
-      $lsp_Datas=DB::table('mdl_course')->select('shortname')->where(''.$value_and_column[1].'',''.$value_and_column[0].'')->get();
-      $output = '';
-      if($lsp_Datas){
-        $output .= '<option value=" ">--Please Choose--</option>';
-        foreach($lsp_Datas as $lsp_Data){
-          $output .= '<option value="'.$lsp_Data->shortname.'">'.$lsp_Data->shortname.'</option>';
-        }
+      //print_r($request->all()); exit;
+
+      
+      $input_header_name_values = $request->input('input_header_name_value');
+      //print_r($input_header_name_values); exit;
+      
+      $query = DB::table('mdl_course');
+      foreach($input_header_name_values as $input_header_name_value){
+       // print_r($input_header_name_value);
+        $value_and_column = explode('||||||', $input_header_name_value);
+        //print_r($value_and_column);
+        $column_name = $value_and_column[1];
+          $column_value = $value_and_column[0];
+          //$where = array($column_name, '=', $column_value);
+          $query->where(''.$column_name.'',''.$column_value.'');
+          
       }
-      echo $output;
+
+$lsp_Datas = $query->get();
+ //print_r($lsp_Datas);
+
+ //die;
+      
+      //print_r($lsp_Datas); exit;
+     //$lsp_Datas=DB::table('mdl_course')->select('shortname')->where($where)->get();
+      
+      //$output = '';
+      $result = array();
+      if($lsp_Datas){
+        $explode_all_headers = explode('||', $request->input('all_selected_headers'));
+        $sr =1;
+        
+        foreach($explode_all_headers as $explode_all_header){
+          $output = '';
+          foreach($input_header_name_values as $input_header_name_value){
+            $column = explode('||||||', $input_header_name_value);
+            if($explode_all_header != $column[1]){
+                $output .= '<option value="">--Please Choose--</option>';
+              foreach($lsp_Datas as $lsp_Data){
+                $output .= '<option value="'.$lsp_Data->$explode_all_header.'">'.$lsp_Data->$explode_all_header.'</option>';
+              }
+              
+              
+            } 
+          } 
+          if($output){
+            $result[$explode_all_header] = $output;
+          }
+          
+
+        $sr++; }
+        
+      }
+      //die;
+      echo json_encode($result);
       exit;
     } 
 
